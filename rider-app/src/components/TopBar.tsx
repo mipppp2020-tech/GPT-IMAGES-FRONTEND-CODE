@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 
 export function TopBar({ back, title }: { back?: boolean; title?: string }) {
-  const rider = useRiderStore((s) => s.rider)
-  const online = useRiderStore((s) => s.online)
+  const rider = useAiecStore((s) => s.rider)
+  const online = useAiecStore((s) => s.online)
 
   return (
     <header className="sticky top-0 z-30 bg-surface border-b border-black/5 px-4 pt-3 pb-2.5">

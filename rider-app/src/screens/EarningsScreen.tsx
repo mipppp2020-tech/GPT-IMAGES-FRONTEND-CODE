@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { TopBar } from '../components/TopBar'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 import { walletStats, formatINR, nextFridayCountdown } from '../lib/selectors'
 
 export function EarningsScreen() {
-  const wallet = useRiderStore((s) => s.wallet)
-  const rider = useRiderStore((s) => s.rider)
+  const wallet = useAiecStore((s) => s.wallet)
+  const rider = useAiecStore((s) => s.rider)
   const { todayTotal, weekTotal, pendingTotal, clearedTotal } = walletStats(wallet)
   const countdown = nextFridayCountdown()
 

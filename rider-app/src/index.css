@@ -43,6 +43,141 @@
   --text-caption--line-height: 1.5rem;
 }
 
+/* ---------------------------------------------------------------------
+ * Role themes. One grammar (the token names below), five looks — the
+ * design system's own rule (02_AIEC_Design_System.md §0.5): a shared
+ * component reads var(--color-surface) etc. regardless of which role's
+ * screen it's mounted in, so StatusStack/EntityCard/MoneyMeter/
+ * EntityTimeline/LifecycleMark need no role-specific code at all. Each
+ * block below only overrides what that theme actually changes.
+ * Sunlight (Rider, Candidate) is the default set in @theme above and
+ * needs no override block.
+ * ------------------------------------------------------------------- */
+
+/* Command, light — Sales Desk, Supplier */
+[data-theme='sales'],
+[data-theme='supplier'] {
+  --color-surface: #f7f9fb;
+  --color-surface-2: #eef1f4;
+  --color-ink: #0e1416;
+  --color-ink-2: #55606a;
+  --color-accent: #0e1416;
+  --color-accent-ink: #ffffff;
+  --color-focus: #4c8df6;
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+/* Premium — Customer */
+[data-theme='customer'] {
+  --color-surface: #fcfaf6;
+  --color-surface-2: #f4f0e8;
+  --color-ink: #1a1712;
+  --color-ink-2: #6b6355;
+  --color-accent: #8c6a21;
+  --color-accent-ink: #ffffff;
+  --color-gold: #c9a227; /* progress ring only — the one element that carries the relationship */
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+/* Slate — Technician, QC (field themes, keep the large Sunlight-matched type scale) */
+[data-theme='technician'],
+[data-theme='qc'] {
+  --color-surface: #0e1416;
+  --color-surface-2: #182024;
+  --color-surface-3: #212c31;
+  --color-ink: #e9eff1;
+  --color-ink-2: #9aa8ae;
+  --color-accent: #22c7c7;
+  --color-accent-ink: #0e1416;
+  --color-safety: #ff4d3d; /* SOS only — no other element may use this value */
+
+  /* Lifecycle ramp, dark-surface calibration — same semantics as light,
+   * tuned so each still meets contrast against a near-black surface. */
+  --color-life-new: #767e88;
+  --color-life-sales: #5296f5;
+  --color-life-won: #a481ef;
+  --color-life-transit: #f0a32b;
+  --color-life-installing: #d9b93c;
+  --color-life-complete: #2fa36b;
+  --color-life-blocked: #f2564a;
+  --color-life-lost: #0b0d0f;
+}
+
+/* Command, dark — Admin */
+[data-theme='admin'] {
+  --color-surface: #0a0e12;
+  --color-surface-2: #121820;
+  --color-surface-3: #1a222c;
+  --color-ink: #dce4ec;
+  --color-ink-2: #8494a4;
+  --color-accent: #f2f5f8;
+  --color-accent-ink: #0a0e12;
+  --color-focus: #4c8df6;
+
+  --color-life-new: #767e88;
+  --color-life-sales: #5296f5;
+  --color-life-won: #a481ef;
+  --color-life-transit: #f0a32b;
+  --color-life-installing: #d9b93c;
+  --color-life-complete: #2fa36b;
+  --color-life-blocked: #f2564a;
+  --color-life-lost: #0b0d0f;
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+/* Executive — Owner: almost no colour, two semantic values for direction of travel */
+[data-theme='owner'] {
+  --color-surface: #08090b;
+  --color-surface-2: #121418;
+  --color-ink: #f2f5f8;
+  --color-ink-2: #7e8894;
+  --color-accent: #f2f5f8;
+  --color-accent-ink: #08090b;
+  --color-good: #2fa36b;
+  --color-bad: #f2564a;
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
 html {
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;

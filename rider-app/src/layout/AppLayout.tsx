@@ -2,10 +2,12 @@ import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { BottomNav } from '../components/BottomNav'
 import { CoinFeedback } from '../components/CoinFeedback'
-import { useRiderStore } from '../lib/store'
+import { DemoRibbon } from '../components/DemoRibbon'
+import { ConversionBar } from '../components/ConversionBar'
+import { useAiecStore } from '../lib/store'
 
 export function AppLayout() {
-  const setOnline = useRiderStore((s) => s.setOnline)
+  const setOnline = useAiecStore((s) => s.setOnline)
 
   useEffect(() => {
     const on = () => setOnline(true)
@@ -26,11 +28,13 @@ export function AppLayout() {
   return (
     <div className="min-h-dvh bg-surface-2 flex justify-center">
       <div className="w-full max-w-md bg-surface min-h-dvh relative shadow-sm">
+        <DemoRibbon />
         <CoinFeedback />
-        <div className="pb-24">
+        <div className="pb-36">
           <Outlet />
         </div>
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md">
+          <ConversionBar />
           <BottomNav />
         </div>
       </div>

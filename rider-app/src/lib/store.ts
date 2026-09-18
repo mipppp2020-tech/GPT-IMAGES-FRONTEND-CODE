@@ -21,7 +21,7 @@ interface RiderStore {
   advanceLeadStatus: (leadId: string) => void
 }
 
-export const useRiderStore = create<RiderStore>()(
+export const useAiecStore = create<RiderStore>()(
   persist(
     (set, get) => ({
       rider: DEMO_RIDER,

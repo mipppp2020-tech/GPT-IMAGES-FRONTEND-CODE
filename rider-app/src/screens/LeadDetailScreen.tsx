@@ -3,14 +3,14 @@ import { TopBar } from '../components/TopBar'
 import { StatusStack } from '../components/StatusStack'
 import { EntityTimeline } from '../components/EntityTimeline'
 import { LifecycleMark } from '../components/LifecycleMark'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 import { LIFECYCLE } from '../lib/lifecycle'
 import { formatINR } from '../lib/selectors'
 
 export function LeadDetailScreen() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const leads = useRiderStore((s) => s.leads)
+  const leads = useAiecStore((s) => s.leads)
   const lead = leads.find((l) => l.id === id)
 
   if (!lead) {

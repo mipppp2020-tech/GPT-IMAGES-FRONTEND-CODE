@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { TopBar } from '../components/TopBar'
 import { MoneyMeter } from '../components/MoneyMeter'
 import { RiderMap } from '../components/RiderMap'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 import { OPPORTUNITY_SITES } from '../lib/mock'
 import { useGeolocation } from '../lib/useGeolocation'
 import { distanceMeters } from '../lib/geo'
@@ -11,10 +11,10 @@ import { leadsCapturedToday, walletStats, formatINR } from '../lib/selectors'
 
 export function RideMapScreen() {
   const navigate = useNavigate()
-  const leads = useRiderStore((s) => s.leads)
-  const wallet = useRiderStore((s) => s.wallet)
-  const rideActive = useRiderStore((s) => s.rideActive)
-  const startRide = useRiderStore((s) => s.startRide)
+  const leads = useAiecStore((s) => s.leads)
+  const wallet = useAiecStore((s) => s.wallet)
+  const rideActive = useAiecStore((s) => s.rideActive)
+  const startRide = useAiecStore((s) => s.startRide)
   const geo = useGeolocation()
 
   const todayCount = leadsCapturedToday(leads)

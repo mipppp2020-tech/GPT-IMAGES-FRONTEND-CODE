@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { TopBar } from '../components/TopBar'
 import { BindingChips } from '../components/BindingChips'
 import { useGeolocation } from '../lib/useGeolocation'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 import { OPPORTUNITY_SITES, OTHER_RIDER_LEADS, ZONES } from '../lib/mock'
 import { distanceMeters, jitterCoord } from '../lib/geo'
 import { fileToCompressedDataUrl } from '../lib/image'
@@ -35,10 +35,10 @@ export function CaptureScreen() {
   const navigate = useNavigate()
   const location = useLocation()
   const geo = useGeolocation()
-  const leads = useRiderStore((s) => s.leads)
-  const online = useRiderStore((s) => s.online)
-  const addLead = useRiderStore((s) => s.addLead)
-  const addWalletEntry = useRiderStore((s) => s.addWalletEntry)
+  const leads = useAiecStore((s) => s.leads)
+  const online = useAiecStore((s) => s.online)
+  const addLead = useAiecStore((s) => s.addLead)
+  const addWalletEntry = useAiecStore((s) => s.addWalletEntry)
 
   const opportunityId = (location.state as { opportunityId?: string } | null)?.opportunityId
   const opportunity = OPPORTUNITY_SITES.find((o) => o.id === opportunityId)

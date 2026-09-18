@@ -1,11 +1,11 @@
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 import { walletStats, formatINR, STREAK_BONUS, STREAK_TARGET_DAYS } from '../lib/selectors'
 
 /** Business Law 4: money on every field screen, as chrome not a page.
  * Shows today, week, and the distance to the next threshold. */
 export function MoneyMeter() {
-  const wallet = useRiderStore((s) => s.wallet)
-  const rider = useRiderStore((s) => s.rider)
+  const wallet = useAiecStore((s) => s.wallet)
+  const rider = useAiecStore((s) => s.rider)
   const { todayTotal, weekTotal, pendingTotal } = walletStats(wallet)
   const daysLeft = Math.max(0, STREAK_TARGET_DAYS - rider.streakDays)
 

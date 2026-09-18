@@ -1,5 +1,5 @@
 import { TopBar } from '../components/TopBar'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 
 const SCHEDULE = [
   { time: '07:45', task: 'राईड सुरू करा', done: true },
@@ -16,7 +16,7 @@ const LEADERBOARD = [
 ]
 
 export function MoreScreen() {
-  const rider = useRiderStore((s) => s.rider)
+  const rider = useAiecStore((s) => s.rider)
 
   return (
     <div>

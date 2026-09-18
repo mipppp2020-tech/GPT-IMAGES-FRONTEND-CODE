@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 import { formatINR } from '../lib/selectors'
 
 /** MoneyFeedback: amount, state, cause, consequence — lands within 3s of the
  * verified act. 700ms coin motion, interruptible, never blocks the next capture. */
 export function CoinFeedback() {
-  const event = useRiderStore((s) => s.lastCoinEvent)
-  const clear = useRiderStore((s) => s.clearCoinEvent)
+  const event = useAiecStore((s) => s.lastCoinEvent)
+  const clear = useAiecStore((s) => s.clearCoinEvent)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export function CoinFeedback() {
 
   return (
     <div
-      className="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 animate-coin"
+      className="fixed top-11 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40 animate-coin"
       role="status"
       onClick={() => {
         setVisible(false)

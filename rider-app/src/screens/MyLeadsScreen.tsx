@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { TopBar } from '../components/TopBar'
 import { EntityCard } from '../components/EntityCard'
-import { useRiderStore } from '../lib/store'
+import { useAiecStore } from '../lib/store'
 import type { LeadStatus } from '../lib/types'
 
 const FILTERS: { key: 'all' | 'active' | 'won' | 'closed'; label: string; match: (s: LeadStatus) => boolean }[] = [
@@ -12,7 +12,7 @@ const FILTERS: { key: 'all' | 'active' | 'won' | 'closed'; label: string; match:
 ]
 
 export function MyLeadsScreen() {
-  const leads = useRiderStore((s) => s.leads)
+  const leads = useAiecStore((s) => s.leads)
   const [filter, setFilter] = useState<(typeof FILTERS)[number]['key']>('all')
   const [q, setQ] = useState('')
 
