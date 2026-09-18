@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { Lead, WalletEntry, RiderProfile, Quote } from './types'
 import { DEMO_RIDER, SEED_LEADS, seedWalletEntries } from './mock'
 import { nextWalletId } from './ids'
+import { defaultShaftReadiness, emptyPayments } from './customerJourney'
 
 interface RiderStore {
   rider: RiderProfile
@@ -21,6 +22,9 @@ interface RiderStore {
   clearCoinEvent: () => void
   advanceLeadStatus: (leadId: string) => void
   closeDeal: (leadId: string, quote: Quote) => void
+  payToken: (leadId: string) => void
+  toggleShaftItem: (leadId: string, index: number) => void
+  payMaterial90: (leadId: string) => void
 }
 
 export const useAiecStore = create<RiderStore>()(
@@ -95,6 +99,46 @@ export const useAiecStore = create<RiderStore>()(
           createdAt: Date.now(),
         })
       },
+
+      // PRD §4.2 Gate 1: token payment is what dispatches the Shaft
+      // Readiness SOP in the first place — nothing before it.
+      payToken: (leadId) =>
+        set((s) => ({
+          leads: s.leads.map((l) =>
+            l.id === leadId
+              ? {
+                  ...l,
+                  payments: { ...(l.payments ?? emptyPayments()), token: true },
+                  shaftReadiness: l.shaftReadiness ?? defaultShaftReadiness(),
+                }
+              : l,
+          ),
+        })),
+
+      toggleShaftItem: (leadId, index) =>
+        set((s) => ({
+          leads: s.leads.map((l) =>
+            l.id === leadId && l.shaftReadiness
+              ? {
+                  ...l,
+                  shaftReadiness: l.shaftReadiness.map((item, i) =>
+                    i === index ? { ...item, done: !item.done } : item,
+                  ),
+                }
+              : l,
+          ),
+        })),
+
+      // PRD §11.1 "Arrival Day — 90% Payment Gate": funds settle to escrow,
+      // supplier auto-paid, lock becomes eligible for unlock. This MVP
+      // records the payment; the live container/unlock mechanics arrive
+      // with the Supplier and Technician phases.
+      payMaterial90: (leadId) =>
+        set((s) => ({
+          leads: s.leads.map((l) =>
+            l.id === leadId ? { ...l, payments: { ...(l.payments ?? emptyPayments()), material90: true } } : l,
+          ),
+        })),
     }),
     { name: 'aiec-rider-store' },
   ),

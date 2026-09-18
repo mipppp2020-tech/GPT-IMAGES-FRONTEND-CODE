@@ -1,4 +1,6 @@
 import type { Lead, RiderProfile, WalletEntry } from './types'
+import { computeQuote } from './pricing'
+import { defaultShaftReadiness, emptyPayments } from './customerJourney'
 
 export const ZONES: Record<string, { lat: number; lng: number }> = {
   Baner: { lat: 18.559, lng: 73.7868 },
@@ -103,6 +105,9 @@ export const SEED_LEADS: Lead[] = [
     createdAt: now - 21 * day,
     synced: true,
     newGroundBonus: false,
+    quote: { ...computeQuote({ floors: 5, passengers: 8 }), currentOffer: 700000 },
+    payments: { token: true, material90: true, final: true },
+    shaftReadiness: defaultShaftReadiness().map((i) => ({ ...i, done: true })),
   },
   {
     id: 'MH-PUN-WKD-LEAD-3812-b',
@@ -146,6 +151,9 @@ export const SEED_LEADS: Lead[] = [
     createdAt: now - 8 * day,
     synced: true,
     newGroundBonus: false,
+    quote: { ...computeQuote({ floors: 6, passengers: 8 }), currentOffer: 660000 },
+    payments: { ...emptyPayments(), token: true },
+    shaftReadiness: defaultShaftReadiness().map((i, idx) => ({ ...i, done: idx < 2 })),
   },
   {
     id: 'MH-PUN-KTJ-LEAD-3790-d',
@@ -188,6 +196,9 @@ export const SEED_LEADS: Lead[] = [
     createdAt: now - 16 * day,
     synced: true,
     newGroundBonus: true,
+    quote: { ...computeQuote({ floors: 8, passengers: 10 }), currentOffer: 850000 },
+    payments: { token: true, material90: true, final: false },
+    shaftReadiness: defaultShaftReadiness().map((i) => ({ ...i, done: true })),
   },
 ]
 

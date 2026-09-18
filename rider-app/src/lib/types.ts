@@ -47,6 +47,22 @@ export interface Lead {
   newGroundBonus: boolean
   aiTip?: string
   quote?: Quote
+  payments?: CustomerPayments
+  shaftReadiness?: ShaftReadinessItem[]
+}
+
+/** PRD §11.2: token at signature, 90% ("material payment") on container
+ * arrival, final 10%-less-token at handover before NOC. */
+export interface CustomerPayments {
+  token: boolean
+  material90: boolean
+  final: boolean
+}
+
+export interface ShaftReadinessItem {
+  label: string
+  done: boolean
+  photo: string | null
 }
 
 export type WalletState = 'pending' | 'cleared'
