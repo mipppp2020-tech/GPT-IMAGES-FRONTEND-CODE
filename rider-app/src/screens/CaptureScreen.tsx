@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { TopBar } from '../components/TopBar'
 import { BindingChips } from '../components/BindingChips'
@@ -53,6 +53,11 @@ export function CaptureScreen() {
   })
   const [floors, setFloors] = useState(opportunity?.floors ?? 5)
   const [shaftReady, setShaftReady] = useState(true)
+  // Guards finalizeSubmit against a double-tap/double-click race: two click
+  // events dispatched in the same synchronous turn both close over the same
+  // pre-update `step`/`photos` state, so a React state flag alone can't stop
+  // the second call — only a ref, mutated synchronously, can.
+  const submitLockRef = useRef(false)
 
   const duplicate = useMemo(() => {
     const nearbyExisting = [
@@ -123,15 +128,23 @@ export function CaptureScreen() {
     else setStep('details')
   }
 
+  /** Simulates the AI quality score (photo clarity, shaft visibility, contact
+   * readability, floor-count confidence). We don't run real vision analysis in
+   * this MVP, so GPS accuracy stands in as the one real signal we have — poor
+   * accuracy correlates with indoor/obstructed capture conditions — plus a
+   * small variance so the ₹10-vs-retake path is a real, reachable outcome
+   * rather than dead code. */
   const computeQualityScore = () => {
-    let score = 60
-    if (photos.shaft) score += 15
-    if (photos.building) score += 15
-    if (photos.contact) score += 10
-    return Math.min(98, score)
+    let score = 92
+    if (geo.accuracy > 25) score -= 25
+    else if (geo.accuracy > 12) score -= 10
+    score -= Math.round(Math.random() * 12)
+    return Math.max(35, Math.min(98, score))
   }
 
   const finalizeSubmit = (payout: 40 | 10, qualityScore: number) => {
+    if (submitLockRef.current) return
+    submitLockRef.current = true
     setStep('submitting')
     const zone = opportunity ? zoneFromCoords(opportunity.lat, opportunity.lng) : zoneFromCoords(geo.lat, geo.lng)
     const coords = opportunity ? { lat: opportunity.lat, lng: opportunity.lng } : jitterCoord({ lat: geo.lat, lng: geo.lng })
@@ -249,24 +262,30 @@ export function CaptureScreen() {
             ))}
           </div>
 
-          <label className="block mb-4">
+          <div className="mb-4" role="group" aria-label="मजल्यांची संख्या">
             <span className="text-body font-bold">मजल्यांची संख्या</span>
             <div className="flex items-center gap-3 mt-2">
               <button
+                type="button"
+                aria-label="मजला कमी करा"
                 onClick={() => setFloors((f) => Math.max(1, f - 1))}
                 className="tap-target w-14 rounded-xl bg-surface-2 text-title font-extrabold"
               >
                 −
               </button>
-              <span className="text-title-l font-extrabold tnum w-14 text-center">{floors}</span>
+              <span className="text-title-l font-extrabold tnum w-14 text-center" aria-live="polite">
+                {floors}
+              </span>
               <button
+                type="button"
+                aria-label="मजला वाढवा"
                 onClick={() => setFloors((f) => Math.min(30, f + 1))}
                 className="tap-target w-14 rounded-xl bg-surface-2 text-title font-extrabold"
               >
                 +
               </button>
             </div>
-          </label>
+          </div>
 
           <div className="mb-6">
             <span className="text-body font-bold">शाफ्ट तयार आहे का?</span>

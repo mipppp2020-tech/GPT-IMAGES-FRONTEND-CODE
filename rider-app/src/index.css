@@ -44,6 +44,7 @@
 
 html {
   -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
 }
 
 body {
@@ -51,12 +52,24 @@ body {
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
   overscroll-behavior-y: contain;
+  /* Belt-and-suspenders for Law 9: whatever combination of extreme font
+   * scale and long content someday slips past a component's own layout,
+   * this is the last line of defense against a page-wide horizontal
+   * scrollbar on a one-handed field device. */
+  overflow-x: hidden;
 }
 
-/* Money strings always use tabular figures so a credit animation never shifts the row */
+/* Money strings always use tabular figures so a credit animation never shifts the row.
+ * overflow-wrap is the escape hatch for Law 9 (survives 200% text scale): a
+ * ₹-amount is one unbreakable digit run with nowhere to linebreak, and at the
+ * OS's most extreme font-scale setting a 6-7 digit amount can outgrow a
+ * 320-400px viewport even with correct layout everywhere else. Wrapping the
+ * digit run onto a second line beats forcing a page-wide horizontal
+ * scrollbar — the failure Law 9 actually cares about. */
 .tnum {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
+  overflow-wrap: anywhere;
 }
 
 .tap-target {

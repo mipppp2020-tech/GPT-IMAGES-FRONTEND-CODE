@@ -12,6 +12,11 @@ export function AppLayout() {
     const off = () => setOnline(false)
     window.addEventListener('online', on)
     window.addEventListener('offline', off)
+    // Reconcile on mount too — a rider who captured offline and only reopens
+    // the app after connectivity is already back would otherwise never fire
+    // a live 'online' transition, and queued items would sit as "syncing"
+    // forever. Network recovery must sync regardless of *when* it's noticed.
+    if (navigator.onLine) setOnline(true)
     return () => {
       window.removeEventListener('online', on)
       window.removeEventListener('offline', off)

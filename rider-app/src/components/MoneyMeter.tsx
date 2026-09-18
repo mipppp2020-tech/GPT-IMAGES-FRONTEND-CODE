@@ -11,12 +11,17 @@ export function MoneyMeter() {
 
   return (
     <div className="mx-4 mt-3 rounded-2xl bg-gradient-to-br from-[#FFF3EC] to-[#FFE7DA] border border-accent/15 px-4 py-3.5">
-      <div className="flex items-center justify-between">
+      {/* Stacks instead of a fixed side-by-side row — Devanagari runs 15-30%
+       * longer than English and the field type scale is already large, so a
+       * two-column row is the first thing to overflow at 200% text scale.
+       * Stacking is the same "narrow before you break" principle the type
+       * system uses elsewhere, applied to layout instead of glyph width. */}
+      <div className="flex flex-col gap-2.5">
         <div>
           <p className="text-caption text-ink-2">आजचे कमाई</p>
           <p className="text-title-l font-extrabold tnum text-accent">₹{formatINR(todayTotal)}</p>
         </div>
-        <div className="text-right">
+        <div>
           <p className="text-caption text-ink-2">या आठवड्याची कमाई</p>
           <p className="text-body-l font-extrabold tnum">₹{formatINR(weekTotal)}</p>
         </div>

@@ -20,7 +20,9 @@ export function EarningsScreen() {
       <div className="mx-4 mt-4 rounded-2xl bg-ink text-white px-4 py-5">
         <p className="text-caption text-white/70">एकूण उपलब्ध शिल्लक</p>
         <p className="text-display font-extrabold tnum mt-1">₹{formatINR(clearedTotal)}</p>
-        <div className="flex gap-4 mt-4">
+        {/* flex-wrap, not a fixed 3-up row — three money values plus Devanagari
+         * labels are the first thing to collide at large text sizes */}
+        <div className="flex flex-wrap gap-x-5 gap-y-3 mt-4">
           <div>
             <p className="text-[12px] text-white/60">आज</p>
             <p className="text-body-l font-extrabold tnum">₹{formatINR(todayTotal)}</p>
