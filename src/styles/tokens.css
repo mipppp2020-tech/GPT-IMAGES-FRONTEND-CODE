@@ -1,0 +1,315 @@
+/* =========================================================================
+   AIEC DESIGN TOKENS
+   Grammar: --aiec-{theme}-{category}-{role}-{state}
+     theme    : sunlight | slate            (role themes)
+     category : surface | text | border | accent | icon
+     role     : semantic slot (page, raised, primary, muted, ...)
+     state    : default | pressed | disabled | selected   (omitted = default)
+
+   Lifecycle tokens are THEME-INDEPENDENT by contract and therefore carry
+   no {theme} segment: --aiec-lifecycle-{state}-{category}
+
+   PROVENANCE
+     [M] measured from a canonical reference image (value in comment)
+     [S] mandated by AIEC source requirements supplied in the build brief
+     [D] derived — no source artifact available; flagged for reconciliation
+   ========================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------- SCALE */
+  /* Canonical design viewport: 430x932. Reference PNGs are ~1.98x this. [M] */
+  --aiec-viewport-w: 430px;
+  --aiec-viewport-h: 932px;
+
+  /* --------------------------------------------------------------- SPACING */
+  /* 4pt base grid. Page gutter measured at 12px on every reference. [M]     */
+  --aiec-space-0: 0px;
+  --aiec-space-1: 2px;
+  --aiec-space-2: 4px;
+  --aiec-space-3: 6px;
+  --aiec-space-4: 8px;
+  --aiec-space-5: 10px;
+  --aiec-space-6: 12px;
+  --aiec-space-7: 14px;
+  --aiec-space-8: 16px;
+  --aiec-space-9: 20px;
+  --aiec-space-10: 24px;
+  --aiec-space-11: 28px;
+  --aiec-space-12: 32px;
+  --aiec-space-14: 40px;
+  --aiec-space-16: 48px;
+
+  --aiec-gutter-page: 12px;          /* [M] card edge at 12px on all refs   */
+  --aiec-gutter-card: 12px;          /* [M] inner padding of EntityCard     */
+  --aiec-stack-tight: 8px;
+  --aiec-stack-base: 12px;
+  --aiec-stack-loose: 16px;
+  --aiec-stack-section: 20px;
+
+  /* ---------------------------------------------------------------- RADII */
+  --aiec-radius-1: 4px;
+  --aiec-radius-2: 8px;             /* [M] buttons: corner run ~6-8px CSS   */
+  --aiec-radius-3: 12px;            /* [M] cards                            */
+  --aiec-radius-4: 16px;            /* [M] sheets, large surfaces           */
+  --aiec-radius-pill: 999px;        /* [M] chips, status pills              */
+
+  /* ------------------------------------------------------------- BORDERS */
+  --aiec-border-hairline: 1px;
+  --aiec-border-emphasis: 1.5px;
+  --aiec-border-focus: 2px;
+
+  /* ----------------------------------------------------------- ELEVATION */
+  /* Refs show one soft ambient shadow only. No stacked/coloured shadows.   */
+  --aiec-elevation-0: none;
+  --aiec-elevation-1: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --aiec-elevation-2: 0 1px 3px rgba(16, 24, 40, 0.07), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --aiec-elevation-3: 0 4px 12px rgba(16, 24, 40, 0.09);
+  --aiec-elevation-sheet: 0 -4px 20px rgba(16, 24, 40, 0.12);
+
+  /* ------------------------------------------------------------ TYPOGRAPHY */
+  /* Devanagari-first stack: Marathi is the primary product language.        */
+  --aiec-font-ui: 'Noto Sans Devanagari', 'Inter', system-ui, -apple-system, sans-serif;
+  --aiec-font-num: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
+
+  --aiec-type-display-size: 27px;   /* [M] ink height 29.8px w/ matras       */
+  --aiec-type-display-line: 36px;
+  --aiec-type-display-weight: 800;
+
+  --aiec-type-h1-size: 23px;
+  --aiec-type-h1-line: 31px;
+  --aiec-type-h1-weight: 700;
+
+  --aiec-type-h2-size: 19px;
+  --aiec-type-h2-line: 26px;
+  --aiec-type-h2-weight: 700;
+
+  --aiec-type-h3-size: 16px;
+  --aiec-type-h3-line: 23px;
+  --aiec-type-h3-weight: 600;
+
+  --aiec-type-body-size: 14px;
+  --aiec-type-body-line: 21px;
+  --aiec-type-body-weight: 400;
+
+  --aiec-type-label-size: 13px;
+  --aiec-type-label-line: 19px;
+  --aiec-type-label-weight: 600;
+
+  --aiec-type-caption-size: 12px;
+  --aiec-type-caption-line: 17px;
+  --aiec-type-caption-weight: 500;
+
+  --aiec-type-micro-size: 11px;
+  --aiec-type-micro-line: 15px;
+  --aiec-type-micro-weight: 600;
+
+  /* ---------------------------------------------------------- TOUCH TARGETS */
+  /* [S] Mandated by the AIEC design system. These override reference
+         geometry wherever a reference control measures smaller.             */
+  --aiec-touch-floor: 48px;          /* universal minimum                    */
+  --aiec-touch-sunlight-primary: 72px;
+  --aiec-touch-slate-evidence: 64px;
+  --aiec-touch-slate-shutter: 72px;
+  --aiec-touch-sos: 64px;
+
+  /* ------------------------------------------------------------- CHROME */
+  --aiec-statusbar-h: 44px;          /* [M] 87 ref px / 1.979                */
+  --aiec-appbar-h: 56px;             /* [M]                                  */
+  --aiec-tabbar-h: 56px;             /* [M] + safe area                      */
+  --aiec-safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ------------------------------------------------------------- MOTION */
+  /* [S] Limited categories only. No entrance animation on page load.       */
+  --aiec-motion-instant: 0ms;
+  --aiec-motion-state: 120ms;        /* press / toggle feedback              */
+  --aiec-motion-transition: 220ms;   /* sheet, nav, disclosure               */
+  --aiec-motion-alert: 900ms;        /* brief pulse, then still              */
+  --aiec-ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
+  --aiec-ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+
+  /* ================================================================
+     LIFECYCLE — THEME INDEPENDENT  [M from home-screen map legend]
+     Eight canonical states. Identical in sunlight and slate.
+     ================================================================ */
+  --aiec-lifecycle-new-accent: #5B616B;
+  --aiec-lifecycle-new-surface: #F1F2F4;
+  --aiec-lifecycle-new-text: #3A3F47;
+
+  --aiec-lifecycle-selling-accent: #1167D7;
+  --aiec-lifecycle-selling-surface: #E8F1FD;
+  --aiec-lifecycle-selling-text: #0B4C9F;
+
+  --aiec-lifecycle-won-accent: #742AC3;
+  --aiec-lifecycle-won-surface: #F1E9FB;
+  --aiec-lifecycle-won-text: #562092;
+
+  --aiec-lifecycle-material-accent: #FE6805;
+  --aiec-lifecycle-material-surface: #FFEFE4;
+  --aiec-lifecycle-material-text: #B44A03;
+
+  --aiec-lifecycle-installing-accent: #FEB708;
+  --aiec-lifecycle-installing-surface: #FFF6E0;
+  --aiec-lifecycle-installing-text: #8A6303;
+
+  --aiec-lifecycle-done-accent: #058A47;
+  --aiec-lifecycle-done-surface: #E6F5ED;
+  --aiec-lifecycle-done-text: #046936;
+
+  --aiec-lifecycle-blocked-accent: #F11403;
+  --aiec-lifecycle-blocked-surface: #FDEAE8;
+  --aiec-lifecycle-blocked-text: #B00F02;
+
+  --aiec-lifecycle-closed-accent: #0E1116;
+  --aiec-lifecycle-closed-surface: #EDEEF0;
+  --aiec-lifecycle-closed-text: #0E1116;
+}
+
+/* =========================================================================
+   ROLE THEME: SUNLIGHT
+   Daylight field operation. High luminance, maximum contrast, the default
+   for every Rider screen except evidence capture.
+   ========================================================================= */
+[data-aiec-theme='sunlight'] {
+  --aiec-sunlight-surface-page: #F5F6F8;        /* [M] inter-card gap       */
+  --aiec-sunlight-surface-raised: #FFFFFF;      /* [M] cards                */
+  --aiec-sunlight-surface-sunken: #EEF0F3;
+  --aiec-sunlight-surface-inverse: #12161C;
+  --aiec-sunlight-surface-primary: #FE5B01;     /* [M] card CTA fill        */
+  --aiec-sunlight-surface-primary-pressed: #DC4E01;
+  --aiec-sunlight-surface-primary-disabled: #FFD3B8;
+  --aiec-sunlight-surface-primary-weak: #FFF1E8;
+  --aiec-sunlight-surface-info-weak: #EAF2FE;
+  --aiec-sunlight-surface-scrim: rgba(12, 16, 22, 0.44);
+
+  --aiec-sunlight-text-primary: #10161E;
+  --aiec-sunlight-text-secondary: #4A515B;
+  --aiec-sunlight-text-muted: #767D88;
+  --aiec-sunlight-text-inverse: #FFFFFF;
+  --aiec-sunlight-text-onprimary: #FFFFFF;
+  --aiec-sunlight-text-accent: #D24C01;
+  --aiec-sunlight-text-disabled: #A6ACB5;
+
+  --aiec-sunlight-border-subtle: #E7E9ED;       /* [M] card hairline        */
+  --aiec-sunlight-border-strong: #CFD3DA;
+  --aiec-sunlight-border-primary: #FE5B01;
+  --aiec-sunlight-border-focus: #0866FE;        /* [M] info blue            */
+
+  --aiec-sunlight-accent-primary: #FE5B01;
+  --aiec-sunlight-accent-info: #0866FE;         /* [M]                      */
+  --aiec-sunlight-accent-success: #03954D;      /* [M] success ring         */
+
+  --aiec-sunlight-icon-primary: #10161E;
+  --aiec-sunlight-icon-secondary: #5A616B;
+  --aiec-sunlight-icon-onprimary: #FFFFFF;
+  --aiec-sunlight-icon-accent: #FE5B01;
+}
+
+/* =========================================================================
+   ROLE THEME: SLATE
+   Evidence capture. The camera feed is the content; chrome recedes so the
+   operator judges the frame, not the UI.
+   ========================================================================= */
+[data-aiec-theme='slate'] {
+  --aiec-slate-surface-page: #0E1116;
+  --aiec-slate-surface-raised: #1A1F27;         /* [M] #2F353D shutter ring */
+  --aiec-slate-surface-sunken: #080A0E;
+  --aiec-slate-surface-inverse: #FFFFFF;
+  --aiec-slate-surface-primary: #FE5B01;
+  --aiec-slate-surface-primary-pressed: #DC4E01;
+  --aiec-slate-surface-primary-disabled: #6B3A1B;
+  --aiec-slate-surface-primary-weak: rgba(254, 91, 1, 0.16);
+  --aiec-slate-surface-info-weak: rgba(8, 102, 254, 0.18);
+  --aiec-slate-surface-scrim: rgba(8, 10, 14, 0.62);
+
+  --aiec-slate-text-primary: #FFFFFF;
+  --aiec-slate-text-secondary: #C3C9D2;
+  --aiec-slate-text-muted: #8B929C;
+  --aiec-slate-text-inverse: #10161E;
+  --aiec-slate-text-onprimary: #FFFFFF;
+  --aiec-slate-text-accent: #FF9354;
+  --aiec-slate-text-disabled: #5C636D;
+
+  --aiec-slate-border-subtle: rgba(255, 255, 255, 0.14);
+  --aiec-slate-border-strong: rgba(255, 255, 255, 0.30);
+  --aiec-slate-border-primary: #FE5B01;
+  --aiec-slate-border-focus: #6CA8FC;
+
+  --aiec-slate-accent-primary: #FE5B01;
+  --aiec-slate-accent-info: #6CA8FC;
+  --aiec-slate-accent-success: #23B26B;
+
+  --aiec-slate-icon-primary: #FFFFFF;
+  --aiec-slate-icon-secondary: #C3C9D2;
+  --aiec-slate-icon-onprimary: #FFFFFF;
+  --aiec-slate-icon-accent: #FF9354;
+}
+
+/* =========================================================================
+   THEME ALIASES
+   Components consume the alias, never the themed token directly. This is
+   what makes a single component render correctly under both role themes
+   and keeps rule 18 (fix the token, not the screen) enforceable.
+   ========================================================================= */
+[data-aiec-theme='sunlight'] {
+  --surface-page: var(--aiec-sunlight-surface-page);
+  --surface-raised: var(--aiec-sunlight-surface-raised);
+  --surface-sunken: var(--aiec-sunlight-surface-sunken);
+  --surface-inverse: var(--aiec-sunlight-surface-inverse);
+  --surface-primary: var(--aiec-sunlight-surface-primary);
+  --surface-primary-pressed: var(--aiec-sunlight-surface-primary-pressed);
+  --surface-primary-disabled: var(--aiec-sunlight-surface-primary-disabled);
+  --surface-primary-weak: var(--aiec-sunlight-surface-primary-weak);
+  --surface-info-weak: var(--aiec-sunlight-surface-info-weak);
+  --surface-scrim: var(--aiec-sunlight-surface-scrim);
+  --text-primary: var(--aiec-sunlight-text-primary);
+  --text-secondary: var(--aiec-sunlight-text-secondary);
+  --text-muted: var(--aiec-sunlight-text-muted);
+  --text-inverse: var(--aiec-sunlight-text-inverse);
+  --text-onprimary: var(--aiec-sunlight-text-onprimary);
+  --text-accent: var(--aiec-sunlight-text-accent);
+  --text-disabled: var(--aiec-sunlight-text-disabled);
+  --border-subtle: var(--aiec-sunlight-border-subtle);
+  --border-strong: var(--aiec-sunlight-border-strong);
+  --border-primary: var(--aiec-sunlight-border-primary);
+  --border-focus: var(--aiec-sunlight-border-focus);
+  --accent-primary: var(--aiec-sunlight-accent-primary);
+  --accent-info: var(--aiec-sunlight-accent-info);
+  --accent-success: var(--aiec-sunlight-accent-success);
+  --icon-primary: var(--aiec-sunlight-icon-primary);
+  --icon-secondary: var(--aiec-sunlight-icon-secondary);
+  --icon-onprimary: var(--aiec-sunlight-icon-onprimary);
+  --icon-accent: var(--aiec-sunlight-icon-accent);
+  --touch-primary: var(--aiec-touch-sunlight-primary);
+}
+
+[data-aiec-theme='slate'] {
+  --surface-page: var(--aiec-slate-surface-page);
+  --surface-raised: var(--aiec-slate-surface-raised);
+  --surface-sunken: var(--aiec-slate-surface-sunken);
+  --surface-inverse: var(--aiec-slate-surface-inverse);
+  --surface-primary: var(--aiec-slate-surface-primary);
+  --surface-primary-pressed: var(--aiec-slate-surface-primary-pressed);
+  --surface-primary-disabled: var(--aiec-slate-surface-primary-disabled);
+  --surface-primary-weak: var(--aiec-slate-surface-primary-weak);
+  --surface-info-weak: var(--aiec-slate-surface-info-weak);
+  --surface-scrim: var(--aiec-slate-surface-scrim);
+  --text-primary: var(--aiec-slate-text-primary);
+  --text-secondary: var(--aiec-slate-text-secondary);
+  --text-muted: var(--aiec-slate-text-muted);
+  --text-inverse: var(--aiec-slate-text-inverse);
+  --text-onprimary: var(--aiec-slate-text-onprimary);
+  --text-accent: var(--aiec-slate-text-accent);
+  --text-disabled: var(--aiec-slate-text-disabled);
+  --border-subtle: var(--aiec-slate-border-subtle);
+  --border-strong: var(--aiec-slate-border-strong);
+  --border-primary: var(--aiec-slate-border-primary);
+  --border-focus: var(--aiec-slate-border-focus);
+  --accent-primary: var(--aiec-slate-accent-primary);
+  --accent-info: var(--aiec-slate-accent-info);
+  --accent-success: var(--aiec-slate-accent-success);
+  --icon-primary: var(--aiec-slate-icon-primary);
+  --icon-secondary: var(--aiec-slate-icon-secondary);
+  --icon-onprimary: var(--aiec-slate-icon-onprimary);
+  --icon-accent: var(--aiec-slate-accent-primary);
+  --touch-primary: var(--aiec-touch-slate-evidence);
+}

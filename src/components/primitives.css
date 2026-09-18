@@ -1,0 +1,1528 @@
+/* =========================================================================
+   AIEC SHARED PRIMITIVES
+   Rule 18: a visual defect is fixed here, never on a screen.
+   ========================================================================= */
+
+/* ------------------------------------------------------------- SURFACES */
+.aiec-card {
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  border-radius: var(--aiec-radius-3);
+  box-shadow: var(--aiec-elevation-2);
+}
+.aiec-card--flat { box-shadow: none; }
+.aiec-card--tinted {
+  background: var(--surface-primary-weak);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.aiec-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aiec-space-4);
+  padding-block: var(--aiec-space-6) var(--aiec-space-4);
+}
+.aiec-section__title {
+  font-size: var(--aiec-type-h2-size);
+  line-height: var(--aiec-type-h2-line);
+  font-weight: var(--aiec-type-h2-weight);
+  color: var(--text-primary);
+}
+.aiec-section__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-2);
+  color: var(--accent-primary);
+  font-size: var(--aiec-type-label-size);
+  font-weight: var(--aiec-type-label-weight);
+  min-height: 0;
+  padding: var(--aiec-space-2);
+  margin: calc(var(--aiec-space-2) * -1);
+}
+
+/* -------------------------------------------------------------- BUTTONS */
+/* Every button is at least the universal 48px floor. NextAction raises it
+   to the theme's primary target (72 sunlight / 64 slate).                 */
+.aiec-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aiec-space-4);
+  min-height: var(--aiec-touch-floor);
+  padding-inline: var(--aiec-space-8);
+  border-radius: var(--aiec-radius-2);
+  font-size: var(--aiec-type-h3-size);
+  line-height: var(--aiec-type-h3-line);
+  font-weight: 700;
+  text-align: center;
+  transition: background-color var(--aiec-motion-state) var(--aiec-ease-standard),
+              border-color var(--aiec-motion-state) var(--aiec-ease-standard);
+}
+.aiec-btn--primary {
+  background: var(--surface-primary);
+  color: var(--text-onprimary);
+  border: var(--aiec-border-hairline) solid var(--surface-primary);
+}
+.aiec-btn--primary:active { background: var(--surface-primary-pressed); }
+
+.aiec-btn--secondary {
+  background: var(--surface-raised);
+  color: var(--accent-primary);
+  border: var(--aiec-border-emphasis) solid var(--border-primary);
+}
+.aiec-btn--secondary:active { background: var(--surface-primary-weak); }
+
+.aiec-btn--quiet {
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+}
+
+.aiec-btn--block { width: 100%; }
+.aiec-btn--compact {
+  font-size: var(--aiec-type-label-size);
+  line-height: var(--aiec-type-label-line);
+  padding-inline: var(--aiec-space-6);
+  gap: var(--aiec-space-3);
+}
+
+/* Icon-only control: square, still at the touch floor. */
+.aiec-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--aiec-touch-floor);
+  min-height: var(--aiec-touch-floor);
+  border-radius: var(--aiec-radius-2);
+  color: var(--icon-primary);
+}
+
+/* ---------------------------------------------------------------- CHIPS */
+.aiec-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  padding: var(--aiec-space-3) var(--aiec-space-6);
+  border-radius: var(--aiec-radius-pill);
+  font-size: var(--aiec-type-caption-size);
+  line-height: var(--aiec-type-caption-line);
+  font-weight: var(--aiec-type-caption-weight);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-height: 0;
+}
+.aiec-chip--interactive {
+  min-height: var(--aiec-touch-floor);
+  padding-inline: var(--aiec-space-8);
+}
+.aiec-chip--selected {
+  background: var(--surface-primary-weak);
+  color: var(--text-accent);
+  box-shadow: inset 0 0 0 1px var(--border-primary);
+}
+
+/* ---------------------------------------------------- STATUS INDICATOR */
+/* The dot colour comes from the lifecycle token, which is theme independent
+   by contract, so a state reads identically in sunlight and slate.        */
+.aiec-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  padding: var(--aiec-space-1) var(--aiec-space-5);
+  border-radius: var(--aiec-radius-pill);
+  background: var(--status-surface);
+  color: var(--status-text);
+  font-size: 10.5px;
+  line-height: 16px;
+  font-weight: 600;
+  min-height: 0;
+  white-space: nowrap;
+}
+.aiec-status__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--status-accent);
+  flex: none;
+}
+.aiec-status--bare {
+  background: transparent;
+  padding: 0;
+}
+
+/* The full five-slot disclosure. A status that cannot answer all five is a
+   type error upstream; this block renders what the type guarantees.       */
+.aiec-statusfull {
+  display: grid;
+  gap: var(--aiec-space-4);
+}
+.aiec-statusfull__head {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  flex-wrap: wrap;
+}
+.aiec-statusfull__reason {
+  font-size: var(--aiec-type-body-size);
+  line-height: var(--aiec-type-body-line);
+  color: var(--text-secondary);
+}
+.aiec-statusfull__grid {
+  display: grid;
+  gap: var(--aiec-space-3);
+}
+.aiec-slot {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--aiec-space-4);
+  align-items: baseline;
+}
+.aiec-slot__key {
+  font-size: var(--aiec-type-micro-size);
+  line-height: var(--aiec-type-micro-line);
+  font-weight: var(--aiec-type-micro-weight);
+  color: var(--text-muted);
+  text-transform: none;
+}
+.aiec-slot__val {
+  font-size: var(--aiec-type-caption-size);
+  line-height: var(--aiec-type-caption-line);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ------------------------------------------------------- CUSTODY LINE */
+.aiec-custody {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  font-size: var(--aiec-type-caption-size);
+  line-height: var(--aiec-type-caption-line);
+  color: var(--text-secondary);
+}
+.aiec-custody__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-2);
+  padding: var(--aiec-space-1) var(--aiec-space-4);
+  border-radius: var(--aiec-radius-pill);
+  font-weight: 600;
+}
+.aiec-custody--rider .aiec-custody__badge {
+  background: var(--surface-primary-weak);
+  color: var(--text-accent);
+}
+.aiec-custody--aiec .aiec-custody__badge,
+.aiec-custody--system .aiec-custody__badge {
+  background: var(--surface-info-weak);
+  color: var(--aiec-lifecycle-selling-text);
+}
+.aiec-custody--customer .aiec-custody__badge,
+.aiec-custody--vendor .aiec-custody__badge {
+  background: var(--aiec-lifecycle-new-surface);
+  color: var(--aiec-lifecycle-new-text);
+}
+
+/* --------------------------------------------------------- NEXT ACTION */
+/* The dominant action on a field screen. Lives in the bottom third, spans
+   the safe width, and never sits flush to a screen edge (glove operation). */
+.aiec-nextaction {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  padding: var(--aiec-space-6) var(--aiec-gutter-page)
+           calc(var(--aiec-space-6) + var(--aiec-safe-bottom));
+  background: var(--surface-raised);
+  border-top: var(--aiec-border-hairline) solid var(--border-subtle);
+  display: grid;
+  gap: var(--aiec-space-5);
+}
+.aiec-nextaction--onpage {
+  background: transparent;
+  border-top: 0;
+}
+.aiec-nextaction__row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--aiec-space-5);
+}
+.aiec-nextaction__row > * { flex: 1; }
+.aiec-nextaction__row > .aiec-nextaction__grow { flex: 1.35; }
+
+/* Primary control height is the theme's mandated target, not the reference's
+   33px pill. Documented deviation: source §9 outranks reference geometry. */
+.aiec-nextaction .aiec-btn {
+  min-height: var(--touch-primary);
+  border-radius: var(--aiec-radius-2);
+  font-size: var(--aiec-type-h3-size);
+}
+
+.aiec-nextaction__context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-5) var(--aiec-space-6);
+  border-radius: var(--aiec-radius-2);
+  background: var(--surface-primary-weak);
+}
+.aiec-nextaction__ctxlabel {
+  font-size: var(--aiec-type-caption-size);
+  line-height: var(--aiec-type-caption-line);
+  color: var(--text-secondary);
+}
+.aiec-nextaction__ctxvalue {
+  font-family: var(--aiec-font-num);
+  font-size: var(--aiec-type-h2-size);
+  line-height: var(--aiec-type-h2-line);
+  font-weight: 800;
+  color: var(--text-accent);
+}
+
+/* --------------------------------------------------------- KEYRING GATE */
+/* A locked action shows the lock and its four answers. It is NOT a disabled
+   button: the user must be able to read why, who, what and what-next.      */
+.aiec-gate {
+  display: grid;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-7);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-raised);
+  border: var(--aiec-border-emphasis) dashed var(--border-strong);
+}
+.aiec-gate__head {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-5);
+}
+.aiec-gate__lock {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--aiec-radius-2);
+  display: grid;
+  place-items: center;
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  flex: none;
+}
+.aiec-gate__title {
+  font-size: var(--aiec-type-h3-size);
+  line-height: var(--aiec-type-h3-line);
+  font-weight: var(--aiec-type-h3-weight);
+  color: var(--text-primary);
+}
+.aiec-gate__answers { display: grid; gap: var(--aiec-space-3); }
+
+/* Evidence progress: the requirement is legible as a count, not a spinner. */
+.aiec-gate__meter {
+  height: 6px;
+  border-radius: var(--aiec-radius-pill);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+.aiec-gate__meterfill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-primary);
+  transition: width var(--aiec-motion-transition) var(--aiec-ease-decelerate);
+}
+.aiec-gate__req {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aiec-space-4);
+  font-size: var(--aiec-type-caption-size);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ------------------------------------------------------- DEVICE CHROME */
+/* Simulated OS status bar. Present so a rendered screen aligns with the
+   canonical reference, which includes it. Demo shell only. */
+.aiec-statusbar {
+  height: var(--aiec-statusbar-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--aiec-space-9) var(--aiec-space-8);
+  font-family: var(--aiec-font-num);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--surface-page);
+  letter-spacing: 0.01em;
+}
+.aiec-statusbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  font-size: 13px;
+}
+.aiec-statusbar__bars { display: flex; align-items: flex-end; gap: 1.5px; }
+.aiec-statusbar__bars i {
+  display: block;
+  width: 3px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.aiec-statusbar__batt {
+  width: 24px; height: 12px;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  position: relative;
+  padding: 1.5px;
+}
+.aiec-statusbar__batt::after {
+  content: '';
+  position: absolute;
+  right: -3.5px; top: 3px;
+  width: 2px; height: 4px;
+  background: currentColor;
+  border-radius: 0 1px 1px 0;
+}
+.aiec-statusbar__battfill {
+  display: block; height: 100%;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+/* ---------------------------------------------------------------- APPBAR */
+.aiec-appbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-4) var(--aiec-gutter-page);
+  background: var(--surface-page);
+}
+.aiec-appbar--contextual {
+  gap: var(--aiec-space-4);
+  padding-block: 0 var(--aiec-space-3);
+}
+
+.aiec-brand { display: flex; align-items: center; gap: var(--aiec-space-4); flex: none; }
+.aiec-brand__mark { flex: none; }
+.aiec-brand__text { display: grid; gap: 1px; }
+.aiec-brand__name {
+  font-family: var(--aiec-font-num);
+  font-size: 22px;
+  line-height: 24px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.aiec-brand__tagline {
+  font-size: 8.5px;
+  line-height: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.aiec-citychip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  padding: var(--aiec-space-4) var(--aiec-space-6);
+  border-radius: var(--aiec-radius-pill);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  box-shadow: var(--aiec-elevation-1);
+  font-size: var(--aiec-type-label-size);
+  font-weight: 600;
+  color: var(--text-primary);
+  min-height: 40px;
+}
+
+.aiec-appbar__spacer { flex: 1; }
+
+.aiec-bell { position: relative; flex: none; text-decoration: none; }
+.aiec-bell__badge {
+  position: absolute;
+  top: 4px; right: 4px;
+  min-width: 18px; height: 18px;
+  padding-inline: 4px;
+  border-radius: var(--aiec-radius-pill);
+  background: var(--surface-primary);
+  color: var(--text-onprimary);
+  font-family: var(--aiec-font-num);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--surface-page);
+}
+
+.aiec-whoami { display: flex; align-items: center; gap: var(--aiec-space-4); flex: none; }
+.aiec-whoami__avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surface-sunken);
+  color: var(--icon-secondary);
+  display: grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+}
+.aiec-whoami__text { display: grid; gap: 0; text-align: right; }
+.aiec-whoami__hello {
+  font-size: 10px; line-height: 13px;
+  color: var(--text-muted);
+}
+.aiec-whoami__name {
+  font-size: 13px; line-height: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.aiec-whoami__role {
+  font-size: 10px; line-height: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.aiec-appbar__title {
+  font-size: var(--aiec-type-h3-size);
+  line-height: var(--aiec-type-h3-line);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ---------------------------------------------------------------- TABBAR */
+.aiec-tabbar {
+  flex: none;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: stretch;
+  background: var(--surface-raised);
+  border-top: var(--aiec-border-hairline) solid var(--border-subtle);
+  padding-bottom: var(--aiec-safe-bottom);
+  box-shadow: 0 -1px 0 rgba(16, 24, 40, 0.03);
+}
+.aiec-tab {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aiec-space-2);
+  min-height: var(--aiec-tabbar-h);
+  padding: var(--aiec-space-4) var(--aiec-space-2) var(--aiec-space-3);
+  color: var(--text-secondary);
+  position: relative;
+}
+.aiec-tab__label {
+  font-size: var(--aiec-type-caption-size);
+  line-height: var(--aiec-type-caption-line);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.aiec-tab--active { color: var(--accent-primary); }
+/* The active marker in the reference is a short underline beneath the label. */
+.aiec-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  width: 26px;
+  height: 3px;
+  border-radius: var(--aiec-radius-pill);
+  background: var(--accent-primary);
+}
+
+/* ------------------------------------------------------------ ENTITY CARD */
+/* Reference anatomy: [thumb 78] [content] [right rail: earn chip + CTA].
+   The CTA measures 110x33 in the reference; it is built at the 48px floor
+   instead, per source §9. The card therefore stands taller than the
+   reference by design — a documented, system-wide deviation. */
+.aiec-entity {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) auto;
+  gap: var(--aiec-space-4);
+  padding: var(--aiec-space-3);
+  align-items: start;
+}
+.aiec-entity__thumb {
+  width: 78px;
+  height: 78px;
+  border-radius: var(--aiec-radius-2);
+  object-fit: cover;
+  background: var(--surface-sunken);
+  flex: none;
+}
+.aiec-entity__body { display: grid; gap: var(--aiec-space-1); min-width: 0; align-content: start; }
+.aiec-entity__statusrow {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-5);
+  flex-wrap: wrap;
+  margin-top: var(--aiec-space-1);
+}
+.aiec-entity__title {
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aiec-entity__sub {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-secondary);
+}
+.aiec-entity__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  flex-wrap: wrap;
+  font-size: 10px;
+  line-height: 15px;
+  color: var(--text-secondary);
+  margin-top: var(--aiec-space-1);
+}
+.aiec-entity__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-2);
+  white-space: nowrap;
+}
+.aiec-entity__rail {
+  display: grid;
+  gap: var(--aiec-space-4);
+  justify-items: end;
+  align-content: start;
+}
+.aiec-entity__railtop {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-2);
+}
+.aiec-entity__earn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--aiec-space-2);
+  padding: var(--aiec-space-1) var(--aiec-space-5);
+  border-radius: var(--aiec-radius-pill);
+  background: var(--surface-primary-weak);
+  color: var(--text-accent);
+  font-size: 10.5px;
+  line-height: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.aiec-entity__earnvalue {
+  font-family: var(--aiec-font-num);
+  font-weight: 800;
+}
+.aiec-entity__cta { min-width: 110px; font-size: 12.5px; padding-inline: var(--aiec-space-5); }
+
+/* Distance is an orange affordance in the reference: it is the thing that
+   decides whether the rider rides, so it carries the accent. */
+.aiec-entity__distance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-2);
+  color: var(--text-accent);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* At <360 the rail drops below the body rather than squeezing the CTA. */
+@media (max-width: 359px) {
+  .aiec-entity {
+    grid-template-columns: 64px 1fr;
+  }
+  .aiec-entity__thumb { width: 64px; height: 64px; }
+  .aiec-entity__rail {
+    grid-column: 1 / -1;
+    justify-items: stretch;
+    grid-auto-flow: column;
+    align-items: center;
+  }
+  .aiec-entity__cta { width: 100%; }
+}
+
+/* --------------------------------------------------------------- STAT TILE */
+.aiec-stats {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--aiec-space-5);
+}
+.aiec-stat {
+  min-height: var(--aiec-touch-floor);
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  padding: var(--aiec-space-4) var(--aiec-space-5);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  box-shadow: var(--aiec-elevation-1);
+  min-height: var(--aiec-touch-floor);
+  text-align: start;
+}
+.aiec-stat__icon {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.aiec-stat__body { display: grid; gap: 0; min-width: 0; }
+.aiec-stat__value {
+  font-family: var(--aiec-font-num);
+  font-size: var(--aiec-type-h2-size);
+  line-height: var(--aiec-type-h2-line);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.aiec-stat__label {
+  font-size: 9.5px;
+  line-height: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.aiec-stat__chev { color: var(--icon-secondary); flex: none; margin-inline-start: auto; }
+
+/* --------------------------------------------------------------- BANNERS */
+/* AlertCard — an operational message with a lifecycle tone. Pulses once on
+   arrival for 'blocked' only, then stays still (§16). */
+.aiec-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--alert-surface, var(--surface-info-weak));
+}
+.aiec-alert__icon {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: var(--alert-accent, var(--accent-info));
+  color: #fff;
+}
+.aiec-alert__body { display: grid; gap: var(--aiec-space-2); min-width: 0; }
+.aiec-alert__title {
+  font-size: var(--aiec-type-label-size);
+  line-height: var(--aiec-type-label-line);
+  font-weight: 700;
+  color: var(--alert-text, var(--text-primary));
+}
+.aiec-alert__text {
+  font-size: var(--aiec-type-caption-size);
+  line-height: var(--aiec-type-caption-line);
+  color: var(--text-secondary);
+}
+.aiec-alert--pulse { animation: aiec-pulse var(--aiec-motion-alert) var(--aiec-ease-standard) 1; }
+@keyframes aiec-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  35% { box-shadow: 0 0 0 4px var(--alert-surface); }
+}
+
+/* ------------------------------------------------------ WORKFLOW PROGRESS */
+.aiec-workflow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: start;
+  gap: 0;
+  padding-block: var(--aiec-space-4);
+}
+.aiec-wstep {
+  display: grid;
+  justify-items: center;
+  gap: var(--aiec-space-4);
+  position: relative;
+  padding-inline: var(--aiec-space-2);
+}
+/* Connector sits behind the markers and stops at each marker's edge. */
+.aiec-wstep::before,
+.aiec-wstep::after {
+  content: '';
+  position: absolute;
+  top: 13px;
+  height: 2px;
+  background: var(--border-strong);
+}
+.aiec-wstep::before { inset-inline-start: 0; inset-inline-end: 50%; margin-inline-end: 18px; }
+.aiec-wstep::after  { inset-inline-start: 50%; inset-inline-end: 0; margin-inline-start: 18px; }
+.aiec-wstep:first-child::before { display: none; }
+.aiec-wstep:last-child::after { display: none; }
+.aiec-wstep--done::before,
+.aiec-wstep--done::after,
+.aiec-wstep--current::before { background: var(--accent-success); }
+
+.aiec-wstep__marker {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--aiec-font-num);
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  position: relative;
+  z-index: 1;
+  border: 2px solid var(--surface-raised);
+}
+.aiec-wstep--done .aiec-wstep__marker {
+  background: var(--accent-success);
+  color: #fff;
+}
+.aiec-wstep--current .aiec-wstep__marker {
+  background: var(--accent-info);
+  color: #fff;
+  box-shadow: 0 0 0 3px var(--surface-info-weak);
+}
+.aiec-wstep--current.aiec-wstep--accent .aiec-wstep__marker {
+  background: var(--surface-primary);
+  box-shadow: 0 0 0 3px var(--surface-primary-weak);
+}
+.aiec-wstep__label {
+  font-size: 10.5px;
+  line-height: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-secondary);
+  max-width: 88px;
+}
+.aiec-wstep--current .aiec-wstep__label { color: var(--text-primary); }
+.aiec-wstep__note {
+  font-size: 10px;
+  line-height: 13px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------- MAP */
+.aiec-map {
+  position: relative;
+  width: 100%;
+  background: #EAF0F2;
+  overflow: hidden;
+}
+.aiec-map__canvas { display: block; width: 100%; height: 100%; }
+.aiec-map__pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  color: var(--pin-color);
+  filter: drop-shadow(0 2px 3px rgba(16, 24, 40, 0.28));
+  min-height: 0;
+  line-height: 0;
+}
+.aiec-map__pin--self {
+  transform: translate(-50%, -50%);
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent-info);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 5px rgba(8, 102, 254, 0.20);
+}
+.aiec-map__controls {
+  position: absolute;
+  inset-inline-end: var(--aiec-space-5);
+  top: var(--aiec-space-5);
+  display: grid;
+  gap: var(--aiec-space-4);
+}
+.aiec-map__ctrl {
+  width: 40px; height: 40px;
+  min-height: 40px;
+  border-radius: var(--aiec-radius-2);
+  background: var(--surface-raised);
+  box-shadow: var(--aiec-elevation-2);
+  display: grid;
+  place-items: center;
+  color: var(--icon-primary);
+}
+.aiec-map__legend {
+  position: absolute;
+  inset-inline-start: var(--aiec-space-5);
+  bottom: var(--aiec-space-9);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: var(--aiec-radius-3);
+  box-shadow: var(--aiec-elevation-2);
+  padding: var(--aiec-space-4) var(--aiec-space-5);
+  display: grid;
+  gap: var(--aiec-space-1);
+}
+.aiec-legenditem {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  font-size: 9.5px;
+  line-height: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.aiec-legenditem__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.aiec-map__scale {
+  position: absolute;
+  inset-inline-end: var(--aiec-space-5);
+  bottom: var(--aiec-space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.aiec-map__scalebar {
+  width: 46px; height: 4px;
+  border-inline: 2px solid var(--text-secondary);
+  border-bottom: 2px solid var(--text-secondary);
+}
+
+/* --------------------------------------------------------- SEARCH + FILTER */
+.aiec-searchrow {
+  display: flex;
+  gap: var(--aiec-space-5);
+  align-items: stretch;
+}
+.aiec-search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  padding-inline: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  box-shadow: var(--aiec-elevation-2);
+  min-height: var(--aiec-touch-floor);
+  color: var(--icon-secondary);
+}
+.aiec-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: var(--aiec-type-body-size);
+  color: var(--text-primary);
+  min-height: 0;
+}
+.aiec-search input::placeholder { color: var(--text-muted); }
+.aiec-filterbtn {
+  min-height: var(--aiec-touch-floor);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  padding-inline: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  box-shadow: var(--aiec-elevation-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  flex: none;
+}
+
+/* ------------------------------------------------------------ OFFLINE QUEUE */
+/* Offline is an operational mode, not an error. Calm surface, explicit
+   promise that the work is stored and will sync. */
+.aiec-offline {
+  display: grid;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--aiec-lifecycle-new-surface);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+}
+.aiec-offline__head {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-5);
+}
+.aiec-offline__title {
+  font-size: var(--aiec-type-label-size);
+  line-height: var(--aiec-type-label-line);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aiec-offline__count {
+  margin-inline-start: auto;
+  font-family: var(--aiec-font-num);
+  font-size: var(--aiec-type-caption-size);
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-raised);
+  border-radius: var(--aiec-radius-pill);
+  padding: var(--aiec-space-2) var(--aiec-space-5);
+}
+.aiec-offline__items { display: grid; gap: var(--aiec-space-3); }
+.aiec-offline__item {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  padding: var(--aiec-space-4) var(--aiec-space-5);
+  border-radius: var(--aiec-radius-2);
+  background: var(--surface-raised);
+  font-size: var(--aiec-type-caption-size);
+  color: var(--text-secondary);
+}
+.aiec-offline__item b { color: var(--text-primary); font-weight: 600; }
+.aiec-offline__size { margin-inline-start: auto; font-family: var(--aiec-font-num); }
+
+/* ------------------------------------------------------------- DEMO RIBBON */
+.aiec-demoribbon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aiec-space-4);
+  min-height: 24px;
+  background: var(--aiec-lifecycle-won-surface);
+  color: var(--aiec-lifecycle-won-text);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ------------------------------------------------------------ CONTEXT SHEET */
+.aiec-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-scrim);
+  z-index: 10;
+}
+.aiec-sheet {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 11;
+  background: var(--surface-raised);
+  border-radius: var(--aiec-radius-4) var(--aiec-radius-4) 0 0;
+  box-shadow: var(--aiec-elevation-sheet);
+  padding: var(--aiec-space-5) var(--aiec-gutter-page) calc(var(--aiec-space-8) + var(--aiec-safe-bottom));
+  display: grid;
+  gap: var(--aiec-space-6);
+  max-height: 88%;
+  overflow-y: auto;
+  transition: transform var(--aiec-motion-transition) var(--aiec-ease-decelerate);
+}
+.aiec-sheet__grabber {
+  width: 36px; height: 4px;
+  border-radius: var(--aiec-radius-pill);
+  background: var(--border-strong);
+  justify-self: center;
+}
+.aiec-sheet__title {
+  font-size: var(--aiec-type-h2-size);
+  line-height: var(--aiec-type-h2-line);
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------ SLA INDICATOR */
+.aiec-sla {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-3);
+  font-size: var(--aiec-type-caption-size);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.aiec-sla--breached { color: var(--aiec-lifecycle-blocked-text); }
+.aiec-sla--due { color: var(--aiec-lifecycle-material-text); }
+
+/* -------------------------------------------------------------- SAFETY BAR */
+.aiec-safety {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-5) var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--aiec-lifecycle-done-surface);
+}
+.aiec-safety__icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--aiec-lifecycle-done-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.aiec-safety__title {
+  font-size: var(--aiec-type-label-size);
+  line-height: var(--aiec-type-label-line);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aiec-safety__body {
+  font-size: 11px;
+  line-height: 15px;
+  color: var(--text-secondary);
+}
+
+/* ------------------------------------------------------------- VIEWFINDER */
+/* The evidence surface. Slate theme: the frame is the content, chrome recedes. */
+.aiec-viewfinder {
+  position: relative;
+  width: 100%;
+  background: var(--surface-page);
+  overflow: hidden;
+}
+.aiec-viewfinder__feed {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.aiec-viewfinder__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--aiec-space-6);
+  pointer-events: none;
+}
+.aiec-viewfinder__overlay > * { pointer-events: auto; }
+.aiec-viewfinder__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--aiec-space-5);
+}
+.aiec-vpill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  padding: var(--aiec-space-4) var(--aiec-space-6);
+  border-radius: var(--aiec-radius-2);
+  background: rgba(14, 17, 22, 0.66);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: var(--aiec-type-caption-size);
+  line-height: var(--aiec-type-caption-line);
+  font-weight: 600;
+  min-height: 0;
+}
+.aiec-vpill__sub {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.82;
+}
+/* Framing guide: corner brackets only. It must not compete with the subject. */
+.aiec-vframe {
+  position: absolute;
+  inset: 16% 12% 24%;
+  pointer-events: none;
+}
+.aiec-vframe span {
+  position: absolute;
+  width: 34px; height: 34px;
+  border: 3px solid rgba(255, 255, 255, 0.92);
+}
+.aiec-vframe span:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; border-radius: 6px 0 0 0; }
+.aiec-vframe span:nth-child(2) { top: 0; right: 0; border-left: 0; border-bottom: 0; border-radius: 0 6px 0 0; }
+.aiec-vframe span:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; border-radius: 0 0 0 6px; }
+.aiec-vframe span:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-top: 0; border-radius: 0 0 6px 0; }
+
+.aiec-vcaption {
+  align-self: center;
+  text-align: center;
+  padding: var(--aiec-space-5) var(--aiec-space-8);
+  border-radius: var(--aiec-radius-2);
+  background: rgba(14, 17, 22, 0.66);
+  backdrop-filter: blur(6px);
+  color: #fff;
+}
+.aiec-vcaption b { display: block; font-size: var(--aiec-type-label-size); font-weight: 700; }
+.aiec-vcaption span { font-size: 11px; opacity: 0.86; }
+
+/* --------------------------------------------------------- CAPTURE DECK */
+.aiec-capturedeck {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--aiec-space-6);
+  padding: var(--aiec-space-7) var(--aiec-gutter-page);
+  background: var(--surface-raised);
+}
+.aiec-capturedeck__aux {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  font-size: 11px;
+  line-height: 15px;
+  color: var(--text-secondary);
+  min-height: 0;
+}
+.aiec-capturedeck__aux b { display: block; font-weight: 700; color: var(--text-primary); font-size: 12px; }
+.aiec-capturedeck__auxicon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surface-sunken);
+  color: var(--icon-secondary);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.aiec-capturedeck__aux--end { justify-content: flex-end; text-align: end; }
+
+/* Shutter: the slate evidence control at its mandated 72dp. */
+.aiec-shutter {
+  width: var(--aiec-touch-slate-shutter);
+  height: var(--aiec-touch-slate-shutter);
+  min-height: var(--aiec-touch-slate-shutter);
+  border-radius: 50%;
+  background: var(--surface-primary);
+  box-shadow: 0 0 0 4px var(--surface-raised), 0 0 0 6px var(--surface-primary);
+  justify-self: center;
+}
+.aiec-shutter:active { background: var(--surface-primary-pressed); }
+
+/* ------------------------------------------------------------ TIPS CARD */
+.aiec-tips {
+  display: grid;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-primary-weak);
+}
+.aiec-tips__title {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  font-size: var(--aiec-type-label-size);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aiec-tips__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--aiec-space-5);
+}
+.aiec-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aiec-space-3);
+  font-size: 10.5px;
+  line-height: 14px;
+  color: var(--text-secondary);
+}
+.aiec-tip svg { flex: none; color: var(--accent-primary); margin-top: 1px; }
+@media (max-width: 359px) {
+  .aiec-tips__grid { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------------------ PHOTO GRID */
+.aiec-photogrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--aiec-space-5);
+}
+.aiec-photo {
+  position: relative;
+  border-radius: var(--aiec-radius-2);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+.aiec-photo img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+.aiec-photo__caption {
+  display: block;
+  padding: var(--aiec-space-3) var(--aiec-space-4);
+  font-size: 10.5px;
+  line-height: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  background: var(--surface-raised);
+}
+.aiec-photo__remove {
+  position: absolute;
+  top: var(--aiec-space-3);
+  inset-inline-end: var(--aiec-space-3);
+  width: 22px; height: 22px;
+  min-height: 22px;
+  border-radius: 50%;
+  background: rgba(14, 17, 22, 0.62);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+/* The add tile is an evidence control: 64dp minimum in slate terms. */
+.aiec-photo--add {
+  display: grid;
+  place-items: center;
+  gap: var(--aiec-space-3);
+  min-height: var(--aiec-touch-slate-evidence);
+  aspect-ratio: 4 / 3;
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  background: var(--surface-raised);
+  color: var(--accent-info);
+  font-size: 10.5px;
+  line-height: 14px;
+  font-weight: 700;
+  text-align: center;
+  padding: var(--aiec-space-4);
+}
+.aiec-photo--add span { font-weight: 500; color: var(--text-secondary); }
+
+/* --------------------------------------------------------------- QUALITY */
+.aiec-quality {
+  display: grid;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--aiec-lifecycle-done-surface);
+}
+.aiec-quality__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--aiec-space-4) var(--aiec-space-6);
+}
+.aiec-quality__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aiec-space-3);
+  font-size: 11px;
+  line-height: 15px;
+  color: var(--text-secondary);
+}
+.aiec-quality__item svg { flex: none; color: var(--aiec-lifecycle-done-accent); margin-top: 1px; }
+
+/* ---------------------------------------------------------------- FIELD */
+.aiec-field { display: grid; gap: var(--aiec-space-4); }
+.aiec-field__label {
+  font-size: var(--aiec-type-label-size);
+  line-height: var(--aiec-type-label-line);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aiec-field__box {
+  display: flex;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+}
+.aiec-field__box textarea {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  font-size: var(--aiec-type-body-size);
+  line-height: var(--aiec-type-body-line);
+  color: var(--text-primary);
+  min-height: 44px;
+}
+.aiec-field__box textarea::placeholder { color: var(--text-muted); }
+.aiec-field__count {
+  font-family: var(--aiec-font-num);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: end;
+}
+
+/* ------------------------------------------------------------- MONEY ROWS */
+.aiec-money { display: grid; gap: var(--aiec-space-4); }
+.aiec-money__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--aiec-space-6);
+  font-size: var(--aiec-type-body-size);
+  line-height: var(--aiec-type-body-line);
+  color: var(--text-secondary);
+}
+.aiec-money__row b { font-family: var(--aiec-font-num); font-weight: 600; color: var(--text-primary); }
+.aiec-money__rule { height: 1px; background: var(--border-subtle); }
+.aiec-money__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--aiec-space-6);
+  font-size: var(--aiec-type-h3-size);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aiec-money__total b {
+  font-family: var(--aiec-font-num);
+  font-size: var(--aiec-type-h2-size);
+  font-weight: 800;
+  color: var(--aiec-lifecycle-done-text);
+}
+.aiec-money__hero {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-primary-weak);
+}
+.aiec-money__heroicon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(254, 91, 1, 0.16);
+  color: var(--accent-primary);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.aiec-money__herovalue {
+  margin-inline-start: auto;
+  font-family: var(--aiec-font-num);
+  font-size: var(--aiec-type-h1-size);
+  font-weight: 800;
+  color: var(--text-accent);
+}
+
+/* --------------------------------------------------------------- OPTIONS */
+.aiec-option {
+  min-height: var(--aiec-touch-floor);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-3);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  background: var(--surface-raised);
+  text-align: start;
+  width: 100%;
+}
+.aiec-option--selected {
+  border-color: var(--border-primary);
+  background: var(--surface-primary-weak);
+  border-width: var(--aiec-border-emphasis);
+}
+.aiec-option__radio {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  flex: none;
+  margin-top: 2px;
+  display: grid;
+  place-items: center;
+}
+.aiec-option--selected .aiec-option__radio { border-color: var(--accent-primary); }
+.aiec-option--selected .aiec-option__radio::after {
+  content: '';
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+}
+.aiec-option__body { display: grid; gap: var(--aiec-space-2); min-width: 0; flex: 1; }
+.aiec-option__title {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  font-size: var(--aiec-type-label-size);
+  line-height: var(--aiec-type-label-line);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aiec-option__hint { font-size: 11.5px; line-height: 16px; color: var(--text-secondary); }
+.aiec-option__account {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  margin-top: var(--aiec-space-3);
+  padding: var(--aiec-space-4) var(--aiec-space-5);
+  border-radius: var(--aiec-radius-2);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+  font-size: 11.5px;
+  color: var(--text-primary);
+}
+.aiec-badge-ok {
+  padding: 2px var(--aiec-space-4);
+  border-radius: var(--aiec-radius-pill);
+  background: var(--aiec-lifecycle-done-surface);
+  color: var(--aiec-lifecycle-done-text);
+  font-size: 10px;
+  font-weight: 700;
+}
+.aiec-link {
+  margin-inline-start: auto;
+  color: var(--accent-primary);
+  font-size: 11.5px;
+  font-weight: 700;
+  min-height: 0;
+  padding: var(--aiec-space-2);
+}
+
+/* --------------------------------------------------------------- SUCCESS */
+.aiec-success {
+  display: grid;
+  justify-items: center;
+  gap: var(--aiec-space-6);
+  padding-block: var(--aiec-space-12) var(--aiec-space-9);
+  text-align: center;
+}
+.aiec-success__ring {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: var(--aiec-lifecycle-done-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.aiec-success__title {
+  font-size: var(--aiec-type-h1-size);
+  line-height: var(--aiec-type-h1-line);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.aiec-success__sub {
+  font-size: var(--aiec-type-body-size);
+  line-height: var(--aiec-type-body-line);
+  color: var(--text-secondary);
+}
+/* Confetti is decorative and present in the reference. It is static: a
+   celebration must not delay the rider's next capture (§16). */
+.aiec-confetti { position: absolute; inset: -90px -180px; pointer-events: none; }
+
+/* ------------------------------------------------------------- DATA ROWS */
+.aiec-rows { display: grid; }
+.aiec-rows__row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--aiec-space-6);
+  align-items: baseline;
+  padding-block: var(--aiec-space-5);
+  border-bottom: var(--aiec-border-hairline) solid var(--border-subtle);
+  font-size: var(--aiec-type-body-size);
+  line-height: var(--aiec-type-body-line);
+}
+.aiec-rows__row:last-child { border-bottom: 0; }
+.aiec-rows__key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.aiec-rows__val {
+  text-align: end;
+  color: var(--text-primary);
+  font-weight: 600;
+}
