@@ -292,16 +292,24 @@ export function DocumentRow({ doc, preview }: { doc: DocumentRequirement; previe
             </button>
           ) : (
             <>
-              <button
-                type="button"
-                className={`aiec-doc__action ${
-                  s.kind === 'uploaded' ? 'aiec-doc__action--info' : 'aiec-doc__action--muted'
-                }`}
-                disabled={s.kind !== 'uploaded'}
-              >
-                <Icon name="search" size={14} />
-                {t('docs.view')}
-              </button>
+              {/*
+                Design System §5: `disabled` is FORBIDDEN as a bare state —
+                "a greyed-out button is a lock with no key printed on it."
+                While an upload is still in flight there is genuinely nothing
+                to view, so the control states that instead of going grey and
+                silent. It remains focusable and readable.
+              */}
+              {s.kind === 'uploaded' ? (
+                <button type="button" className="aiec-doc__action aiec-doc__action--info">
+                  <Icon name="search" size={14} />
+                  {t('docs.view')}
+                </button>
+              ) : (
+                <span className="aiec-doc__action aiec-doc__action--muted" role="note">
+                  <Icon name="clock" size={14} />
+                  {t('docs.viewWhenDone')}
+                </span>
+              )}
               <button type="button" className="aiec-doc__action">
                 <Icon name={s.kind === 'uploaded' ? 'list' : 'close'} size={14} />
                 {t(s.kind === 'uploaded' ? 'docs.replace' : 'docs.cancelUpload')}

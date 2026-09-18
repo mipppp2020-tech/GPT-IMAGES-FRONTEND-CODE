@@ -9,6 +9,8 @@ import { useI18n } from '@/i18n';
 import { DOCUMENTS, SITE_RECORDS } from '@/data/records';
 import { isDocumentSatisfied } from '@/domain/types';
 import type { ActionState } from '@/domain/lifecycle';
+import { gate2QcClearance } from '@/policy/gates';
+import { useVerdictToGate } from '@/components/Money';
 
 import d1 from '@/assets/doc-permission.jpg';
 import d2 from '@/assets/doc-extract.jpg';
@@ -46,17 +48,29 @@ export function RiderDocuments() {
   const nav = useNavigate();
   const { id } = useParams();
   const rec = SITE_RECORDS.find((r) => r.id === id) ?? SITE_RECORDS[0];
+  const toGate = useVerdictToGate();
 
   const required = DOCUMENTS.filter((d) => d.required);
   const satisfied = required.filter(isDocumentSatisfied);
   const outstanding = required.filter((d) => !isDocumentSatisfied(d));
 
+  /**
+   * The document set is the evidence Gate 2 reads. The gate's wording comes
+   * from the Policy Engine so this screen and the pipeline cannot disagree
+   * about what is blocking; only the evidence count is local.
+   */
+  const g2 = gate2QcClearance({
+    qcReportId: outstanding.length === 0 ? 'MH-PUNE-Z3-QCIN-0112-4' : null,
+    qcStatus: outstanding.length === 0 ? 'cleared' : 'none',
+  });
+
   const action: ActionState =
-    outstanding.length === 0
+    g2.open
       ? { kind: 'open' }
       : {
           kind: 'gated',
           gate: {
+            ...toGate(g2),
             reason: `${outstanding.length} आवश्यक दस्तऐवज अद्याप पूर्ण झालेले नाहीत.`,
             unlockableBy: 'तुम्ही — उरलेले दस्तऐवज अपलोड करून',
             requirement: {
@@ -65,7 +79,6 @@ export function RiderDocuments() {
               collected: satisfied.length,
               required: required.length,
             },
-            nextStep: 'सर्व दस्तऐवज मिळाल्यावर शुल्क भरण्याची पायरी उघडेल.',
           },
         };
 

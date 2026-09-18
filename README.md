@@ -7,10 +7,38 @@ site through statutory documents, municipal fees and construction to handover.
 Built to reproduce the canonical reference screens in
 `AIEC_Build_Screens_Till_Now.zip` while obeying the AIEC system rules.
 
-> **Read [`DEVIATIONS.md`](./DEVIATIONS.md) first.** The repo contained no PRD,
-> UX Architecture or Design System document, so parts of the token layer are
-> derived rather than read. Every derived value and every departure from a
-> reference image is logged there.
+> **Read [`OPEN-DECISIONS.md`](./OPEN-DECISIONS.md) first.** The source
+> documents are now in the repo and the money engine is wired to them. That
+> file lists what the documents leave to you — including one that changes
+> every quote the system will ever issue — and what of the Design System is
+> not yet applied. [`DEVIATIONS.md`](./DEVIATIONS.md) covers the screens.
+
+## The money engine
+
+`src/policy/` is the spine. The UX Architecture opens with the reason:
+
+> *"This is not a workflow app with payments attached. It is a keyring."*
+> *"The key is always either a rupee or a photograph."*
+
+So the organising object is the **gate**, not the job. Five payment gates,
+one physical triple-key lock, a 20% margin floor, a gamification cap and a
+19-stage pipeline are implemented as pure, tested functions:
+
+| File | What it enforces |
+|---|---|
+| `policy/money.ts` | Integer paise, Indian grouping — never a float near money |
+| `policy/ids.ts` | Law 1 IDs with a Damm check digit |
+| `policy/gates.ts` | The five gates + the triple-key unlock |
+| `policy/pricing.ts` | The margin ladder and the Owner-only floor |
+| `policy/wallet.ts` | Pending→Cleared, penalty order, gamification cap |
+| `policy/pipeline.ts` | The 19-stage machine; forward-only, no skipping |
+
+`npm test` — 61 tests. They prove money cannot skip a gate, move backwards,
+or cross the margin floor, and that the engine returns **codes, not prose**
+(Law 6: a gate that speaks only English is a Marathi user locked out twice).
+
+Walk it at **`/pipeline`**: turn each key, watch each lock open, and try to
+advance without one.
 
 ## Stack
 

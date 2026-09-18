@@ -7,12 +7,15 @@ import './components/primitives.css';
 import { router } from './app/routes';
 import { I18nProvider } from './i18n';
 import { AppProvider } from './app/AppContext';
+import { PipelineProvider } from './app/PipelineContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <I18nProvider initial="mr">
       <AppProvider role="rider" demo={new URLSearchParams(location.search).has('demo')}>
-        <RouterProvider router={router} />
+        <PipelineProvider>
+          <RouterProvider router={router} />
+        </PipelineProvider>
       </AppProvider>
     </I18nProvider>
   </StrictMode>,

@@ -1969,3 +1969,138 @@
 .aiec-role__body { display: grid; gap: var(--aiec-space-3); min-width: 0; flex: 1; }
 .aiec-role__name { font-size: var(--aiec-type-h2-size); line-height: 26px; font-weight: 800; }
 .aiec-role__role { font-size: var(--aiec-type-label-size); color: var(--text-secondary); }
+
+/* ===================================================== MONEY METER (Law VI) */
+/* "Money is never a bare number." Every amount carries state, cause and
+   consequence. Pending and Cleared are always both visible. */
+.aiec-moneymeter {
+  display: grid;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-7);
+  border-radius: var(--aiec-radius-3);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+}
+.aiec-moneymeter__row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--aiec-space-6); }
+.aiec-moneymeter__amount {
+  font-family: var(--aiec-font-num);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.aiec-moneymeter__split { display: flex; gap: var(--aiec-space-8); }
+.aiec-moneymeter__bucket { display: grid; gap: 2px; }
+.aiec-moneymeter__label { font-size: 11px; color: var(--text-secondary); font-weight: 600; }
+.aiec-moneymeter__value {
+  font-family: var(--aiec-font-num);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-size: 17px;
+  font-weight: 700;
+}
+.aiec-moneymeter__cause { font-size: 12px; line-height: 17px; color: var(--text-secondary); }
+.aiec-moneymeter__consequence {
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--text-primary);
+  padding-top: var(--aiec-space-4);
+  border-top: var(--aiec-border-hairline) solid var(--border-subtle);
+}
+
+/* ================================================== TRIPLE KEY PANEL */
+.aiec-triplekey { display: grid; gap: var(--aiec-space-6); padding: var(--aiec-space-7); }
+.aiec-triplekey__keys { display: grid; gap: var(--aiec-space-5); }
+.aiec-key {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: var(--aiec-space-5);
+  align-items: center;
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-2);
+  background: var(--surface-sunken);
+  border: var(--aiec-border-emphasis) solid transparent;
+  text-align: start;
+  width: 100%;
+}
+.aiec-key--turned {
+  background: var(--aiec-lifecycle-done-surface);
+  border-color: var(--aiec-lifecycle-done-accent);
+}
+.aiec-key--waiting { border-color: var(--aiec-lifecycle-material-accent); background: var(--aiec-lifecycle-material-surface); }
+.aiec-key__icon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-raised);
+  color: var(--icon-secondary);
+}
+.aiec-key--turned .aiec-key__icon { background: var(--aiec-lifecycle-done-accent); color: #fff; }
+.aiec-key__title { font-size: var(--aiec-type-label-size); font-weight: 700; }
+.aiec-key__sub { font-size: 11.5px; line-height: 16px; color: var(--text-secondary); }
+.aiec-triplekey__window {
+  display: flex;
+  align-items: center;
+  gap: var(--aiec-space-4);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--aiec-lifecycle-material-text);
+}
+
+/* ========================================================= APPEAL PATH */
+/* Risk item 6: an AI verdict with no visible, one-tap, pay-while-pending
+   appeal is how a technician network learns to distrust the app. */
+.aiec-appeal {
+  display: grid;
+  gap: var(--aiec-space-5);
+  padding: var(--aiec-space-6);
+  border-radius: var(--aiec-radius-2);
+  background: var(--surface-info-weak);
+  margin-top: var(--aiec-space-5);
+}
+.aiec-appeal__head { display: flex; align-items: center; gap: var(--aiec-space-4); }
+.aiec-appeal__title { font-size: var(--aiec-type-label-size); font-weight: 700; color: var(--aiec-lifecycle-selling-text); }
+.aiec-appeal__body { font-size: 12px; line-height: 17px; color: var(--text-secondary); }
+.aiec-appeal__actions { display: flex; gap: var(--aiec-space-5); }
+.aiec-appeal__actions > * { flex: 1; }
+
+/* ====================================================== PIPELINE WALK */
+.aiec-pipeline { display: grid; gap: var(--aiec-space-5); }
+.aiec-pstage {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: var(--aiec-space-5);
+  align-items: center;
+  padding: var(--aiec-space-5) var(--aiec-space-6);
+  border-radius: var(--aiec-radius-2);
+  background: var(--surface-raised);
+  border: var(--aiec-border-hairline) solid var(--border-subtle);
+}
+.aiec-pstage--done { background: var(--aiec-lifecycle-done-surface); border-color: transparent; }
+.aiec-pstage--here { border-color: var(--accent-primary); border-width: var(--aiec-border-emphasis); }
+.aiec-pstage--gate { border-color: var(--aiec-lifecycle-blocked-accent); }
+.aiec-pstage__dot {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-family: var(--aiec-font-num);
+  font-size: 11px;
+  font-weight: 700;
+}
+.aiec-pstage--done .aiec-pstage__dot { background: var(--aiec-lifecycle-done-accent); color: #fff; }
+.aiec-pstage--here .aiec-pstage__dot { background: var(--accent-primary); color: #fff; }
+.aiec-pstage__name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.aiec-pstage__gate {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px var(--aiec-space-4);
+  border-radius: var(--aiec-radius-pill);
+  background: var(--aiec-lifecycle-blocked-surface);
+  color: var(--aiec-lifecycle-blocked-text);
+  white-space: nowrap;
+}
+.aiec-pstage__gate--open { background: var(--aiec-lifecycle-done-surface); color: var(--aiec-lifecycle-done-text); }

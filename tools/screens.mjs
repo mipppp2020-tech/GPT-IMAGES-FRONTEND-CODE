@@ -19,6 +19,9 @@ export const SCREENS = [
   { id: 'S-R-14-notifications', path: '/notifications', ref: 'a_tall_mobile_app_ui_screenshot_clean_flat_design.png' },
   { id: 'S-R-15-profile',       path: '/profile',       ref: 'a_smartphone_app_ui_screenshot_vertical_mobile_sc.png' },
   { id: 'S-R-16-feedback',      path: '/feedback',      ref: 'a_tall_vertical_smartphone_app_screenshot_mobile.png' },
+  // Built from the documents, not from a mockup — there is no reference image
+  // for any screen where the real money moves. Still fully QA-gated.
+  { id: 'S-P-01-pipeline',      path: '/pipeline',      ref: null },
 ];
 
 export const VIEWPORT = { width: 430, height: 932 };

@@ -17,7 +17,7 @@ OUT = '.artifacts/compare'
 
 PAIRS = []
 for line in open('tools/screens.mjs', encoding='utf-8'):
-    m = re.search(r"id: '([^']+)'.*?ref: '([^']+)'", line)
+    m = re.search(r"id: '([^']+)'.*?ref: '([^']+)'", line)  # ref: null rows are skipped
     if m:
         PAIRS.append((m.group(1), m.group(2)))
 

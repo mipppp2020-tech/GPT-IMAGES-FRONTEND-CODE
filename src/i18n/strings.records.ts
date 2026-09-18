@@ -68,7 +68,11 @@ export const mrRecords = {
   'progress.expected': 'अपेक्षित – {date}',                          // [REF]
   'progress.chipDone': 'पूर्ण',                                      // [REF]
   'progress.chipRunning': 'सुरु आहे',                                // [REF]
-  'progress.chipPending': 'प्रलंबित',                                // [REF]
+  // [REF-OVERRIDDEN] The reference reads 'प्रलंबित' (pending). Design System
+  // §7.2 bans that word product-wide and the UX Architecture is explicit:
+  // "There is no screen in AIEC where 'Pending' is an acceptable string."
+  // A source requirement outranks a reference image, so this says when.
+  'progress.chipPending': 'सुरू व्हायचे',
   'progress.currentState': 'सध्याची स्थिती',                          // [REF]
   'progress.currentBody': 'तिसऱ्या मजल्याचे स्लॅब काम सुरु आहे.',      // [REF]
   'progress.percentDone': '{pct}% पूर्ण',                            // [REF]
@@ -101,6 +105,7 @@ export const mrRecords = {
   'docs.uploading': 'अपलोड होत आहे... ({pct}%)',                     // [REF]
   'docs.notUploaded': 'अद्याप अपलोड केलेले नाही',                    // [REF]
   'docs.view': 'पहा',                                                // [REF]
+  'docs.viewWhenDone': 'पाठवल्यावर दिसेल',
   'docs.replace': 'बदल करा',                                         // [REF]
   'docs.cancelUpload': 'रद करा',                                     // [REF]
   'docs.choose': 'फाईल निवडा',                                       // [REF]
@@ -251,7 +256,7 @@ export const enRecords: Record<RecordStringKey, string> = {
   'records.addNew': 'Add new lead',
   'records.stDone': 'Complete',
   'records.stActive': 'Active',
-  'records.stReview': 'Under review',
+  'records.stReview': 'With the inspector',
   'records.stCancelled': 'Cancelled',
   'recdetail.share': 'Share',
   'recdetail.residential': 'Residential building',
@@ -276,7 +281,7 @@ export const enRecords: Record<RecordStringKey, string> = {
   'recdetail.step1': 'Inspection complete',
   'recdetail.step2': 'Final review',
   'recdetail.step2Body': 'Verification by the AIEC team is under way.',
-  'recdetail.step2Chip': 'In progress',
+  'recdetail.step2Chip': 'Under way',
   'recdetail.step3': 'Certificate',
   'recdetail.step3Body': 'The certificate becomes available once verification finishes.',
   'recdetail.editRecord': 'Edit record',
@@ -294,8 +299,8 @@ export const enRecords: Record<RecordStringKey, string> = {
   'progress.startedExpected': 'Started – expected completion: {date}',
   'progress.expected': 'Expected – {date}',
   'progress.chipDone': 'Complete',
-  'progress.chipRunning': 'In progress',
-  'progress.chipPending': 'Pending',
+  'progress.chipRunning': 'Under way',
+  'progress.chipPending': 'Not started',
   'progress.currentState': 'Current state',
   'progress.currentBody': 'Slab work on the third floor is under way.',
   'progress.percentDone': '{pct}% complete',
@@ -326,6 +331,7 @@ export const enRecords: Record<RecordStringKey, string> = {
   'docs.uploading': 'Uploading... ({pct}%)',
   'docs.notUploaded': 'Not uploaded yet',
   'docs.view': 'View',
+  'docs.viewWhenDone': 'Visible once it lands',
   'docs.replace': 'Replace',
   'docs.cancelUpload': 'Cancel',
   'docs.choose': 'Choose file',
@@ -340,7 +346,7 @@ export const enRecords: Record<RecordStringKey, string> = {
   'fee.stepPayment': 'Payment',
   'fee.stepConfirm': 'Confirmation',
   'fee.stDone': 'Complete',
-  'fee.stRunning': 'In progress',
+  'fee.stRunning': 'Under way',
   'fee.stPending': 'Remaining',
   'fee.breakdownTitle': 'Amount payable',
   'fee.registration': 'Flat price (registration fee)',

@@ -12,6 +12,7 @@
  */
 
 import { mrRecords, enRecords } from './strings.records';
+import { mrPipeline, enPipeline } from './strings.pipeline';
 
 export type Lang = 'mr' | 'en';
 
@@ -191,7 +192,11 @@ const mrCore = {
   'detail.messageAction': 'मेसेज',                        // [REF]
   'detail.moreAction': 'अधिक',                            // [REF]
   'detail.importantTitle': 'महत्त्वाची माहिती',            // [REF]
-  'detail.importantBody': 'नवीन प्रोजेक्ट, आर्किटेक्टशी चर्चा केली. 8-10 व्यक्तींची लिफ्ट शक्यता, बजेट चर्चा प्रलंबित.', // [REF]
+  // [REF-OVERRIDDEN] The reference note ends "बजेट चर्चा प्रलंबित" (budget
+  // discussion pending). Rather than drop the banned word, it is replaced
+  // with the thing the word was standing in for: who is holding it. This is
+  // the substitution the UX Architecture prescribes — every wait has an owner.
+  'detail.importantBody': 'नवीन प्रोजेक्ट, आर्किटेक्टशी चर्चा केली. 8-10 व्यक्तींची लिफ्ट शक्यता, बजेट मंजुरी ग्राहकाकडे.',
   'detail.mapTitle': 'नकाशामध्ये स्थान',                   // [REF]
   'detail.showDirection': 'दिशा दाखवा',                   // [REF]
   'detail.earnFromLead': 'या लीडवये संभाव्य कमाई',         // [REF]
@@ -234,7 +239,7 @@ const mrCore = {
 } as const;
 
 /** The full Marathi dictionary: core rider surfaces plus the record flow. */
-export const mr = { ...mrCore, ...mrRecords } as const;
+export const mr = { ...mrCore, ...mrRecords, ...mrPipeline } as const;
 
 export type StringKey = keyof typeof mr;
 
@@ -396,7 +401,7 @@ const enCore: Record<keyof typeof mrCore, string> = {
   'detail.messageAction': 'Message',
   'detail.moreAction': 'More',
   'detail.importantTitle': 'Important information',
-  'detail.importantBody': 'New project, discussed with the architect. Likely 8-10 person lift, budget discussion pending.',
+  'detail.importantBody': 'New project, discussed with the architect. Likely 8-10 person lift; budget approval sits with the customer.',
   'detail.mapTitle': 'Location on map',
   'detail.showDirection': 'Show directions',
   'detail.earnFromLead': 'Potential earning from this lead',
@@ -430,7 +435,7 @@ const enCore: Record<keyof typeof mrCore, string> = {
   'common.of': '/',
 };
 
-export const en: Record<StringKey, string> = { ...enCore, ...enRecords };
+export const en: Record<StringKey, string> = { ...enCore, ...enRecords, ...enPipeline };
 
 export const DICTIONARIES: Record<Lang, Record<StringKey, string>> = {
   mr: mr as unknown as Record<StringKey, string>,

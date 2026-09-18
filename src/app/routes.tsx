@@ -15,7 +15,8 @@ import { RiderFeePaid } from '@/screens/RiderFeePaid';
 import { RiderNotifications } from '@/screens/RiderNotifications';
 import { RiderProfile } from '@/screens/RiderProfile';
 import { RiderFeedback } from '@/screens/RiderFeedback';
-import { Placeholder } from '@/screens/Placeholder';
+import { MoneyPipeline } from '@/screens/MoneyPipeline';
+import { RiderEarnings } from '@/screens/RiderEarnings';
 
 export const router = createBrowserRouter([
   /* Lead flow */
@@ -35,9 +36,12 @@ export const router = createBrowserRouter([
   { path: '/records/:id/fees', element: <RiderFees /> },
   { path: '/records/:id/fees/paid', element: <RiderFeePaid /> },
 
+  /* The money pipeline — the end-to-end workflow, engine-driven */
+  { path: '/pipeline', element: <MoneyPipeline /> },
+
   /* Account */
   { path: '/notifications', element: <RiderNotifications /> },
   { path: '/profile', element: <RiderProfile /> },
   { path: '/feedback', element: <RiderFeedback /> },
-  { path: '/earnings', element: <Placeholder titleKey="tab.earnings" /> },
+  { path: '/earnings', element: <RiderEarnings /> },
 ]);
