@@ -13,6 +13,7 @@
 
 import { mrRecords, enRecords } from './strings.records';
 import { mrPipeline, enPipeline } from './strings.pipeline';
+import { mrRider, enRider } from './strings.rider';
 
 export type Lang = 'mr' | 'en';
 
@@ -239,7 +240,7 @@ const mrCore = {
 } as const;
 
 /** The full Marathi dictionary: core rider surfaces plus the record flow. */
-export const mr = { ...mrCore, ...mrRecords, ...mrPipeline } as const;
+export const mr = { ...mrCore, ...mrRecords, ...mrPipeline, ...mrRider } as const;
 
 export type StringKey = keyof typeof mr;
 
@@ -435,7 +436,7 @@ const enCore: Record<keyof typeof mrCore, string> = {
   'common.of': '/',
 };
 
-export const en: Record<StringKey, string> = { ...enCore, ...enRecords, ...enPipeline };
+export const en: Record<StringKey, string> = { ...enCore, ...enRecords, ...enPipeline, ...enRider };
 
 export const DICTIONARIES: Record<Lang, Record<StringKey, string>> = {
   mr: mr as unknown as Record<StringKey, string>,
