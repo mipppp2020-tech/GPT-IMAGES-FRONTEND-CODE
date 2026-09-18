@@ -1,7 +1,8 @@
 # AIEC Frontend
 
-Production frontend for AIEC — lift/elevator installation lead capture.
-Rider role, Marathi-first.
+Production frontend for AIEC — lift/elevator installation. Rider role,
+Marathi-first: capture construction-site leads, then carry each registered
+site through statutory documents, municipal fees and construction to handover.
 
 Built to reproduce the canonical reference screens in
 `AIEC_Build_Screens_Till_Now.zip` while obeying the AIEC system rules.
@@ -49,6 +50,20 @@ Artifacts land in `.artifacts/` (git-ignored):
 | S-R-05 | `/payout` | Payout method — gross, TDS, net |
 | S-R-06 | `/success` | Submission confirmation |
 | S-R-07 | `/leads/:id` | Lead detail — full five-slot status |
+
+**Record / compliance flow**
+
+| ID | Route | Screen |
+|---|---|---|
+| S-R-08 | `/records` | My records — registered sites by state |
+| S-R-09 | `/records/:id` | Record detail — statutory facts + next steps |
+| S-R-10 | `/records/:id/progress` | Construction progress — six build stages |
+| S-R-11 | `/records/:id/documents` | Document upload — gated on 6 documents |
+| S-R-12 | `/records/:id/fees` | Municipal fee payment |
+| S-R-13 | `/records/:id/fees/paid` | Fee receipt |
+| S-R-14 | `/notifications` | Notifications |
+| S-R-15 | `/profile` | Profile — identity, preferences, security |
+| S-R-16 | `/feedback` | Feedback — gated on the required rating |
 
 Each screen file opens with its **Screen Contract** as a doc comment: role,
 theme, viewport, primary job, dominant action, visible components, workflow
@@ -101,9 +116,17 @@ explicitly for review.
 
 `StatusIndicator` · `CustodyLine` · `NextAction` · `KeyringGate` ·
 `EntityCard` · `StatTile` · `AlertCard` · `WorkflowStep` · `WorkflowProgress` ·
-`MapView` · `MapEntity` · `MapFilter` · `ContextSheet` · `OfflineQueue` ·
-`SLAIndicator` · `ScreenHelp` · `GlobalSearch` · `LanguageSwitch` ·
-`SafetyOverride` · `DemoRibbon` · `AppBar` · `ContextBar` · `TabBar` · `Icon`
+`EntityTimeline` · `StageCard` · `DocumentRow` · `DecisionCard` ·
+`RatingScale` · `MultiSelect` · `NotificationCenter` · `RoleSwitcher` ·
+`Segments` · `Tabs` · `SettingGroup` · `SettingRow` · `MapView` ·
+`MapEntity` · `MapFilter` · `ContextSheet` · `OfflineQueue` · `SLAIndicator` ·
+`ScreenHelp` · `GlobalSearch` · `LanguageSwitch` · `SafetyOverride` ·
+`DemoRibbon` · `AppBar` · `ContextBar` · `TabBar` · `Icon`
+
+`WorkflowProgress` and `EntityTimeline` are deliberately distinct:
+the first tracks a wizard the user is inside right now (horizontal, "you are
+on step 3 of 5"); the second is an entity's history and forecast (vertical,
+each stage carrying its own date and custody).
 
 A visual defect is fixed in the primitive or the token, never on a screen.
 
@@ -127,11 +150,17 @@ is not a small desktop.
 
 ## Verification status
 
-`node tools/qa.mjs` passes on all 7 screens across all 7 widths:
+`node tools/qa.mjs` passes on all 16 screens across all 7 widths:
 no horizontal overflow, no action control under 48px, no clipped content at
 200% text scale. The checks were verified to fail on deliberately broken
 markup, so the pass is meaningful.
 
+It has caught real defects rather than rubber-stamping: carousel controls at
+36px, and (by eye, off the rendered gate) a Marathi quantity-grammar bug where
+"{done} पैकी {total}" rendered "6 out of 4".
+
 Visual fidelity was assessed by rendering each screen at 430×932 and comparing
-against its reference. Current honest scores and the work still needed are in
-`DEVIATIONS.md`.
+against its reference. Six screens reach the 95 target; ten sit at 90–94,
+bounded by the conflict between the mandated touch minimums and the
+references' 33–44px controls. Per-screen scores, every documented deviation,
+and the two levers that would move the rest are in `DEVIATIONS.md`.

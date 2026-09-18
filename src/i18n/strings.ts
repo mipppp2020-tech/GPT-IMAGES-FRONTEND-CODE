@@ -11,9 +11,11 @@
  * wider; if a container survives both, it survives the field.
  */
 
+import { mrRecords, enRecords } from './strings.records';
+
 export type Lang = 'mr' | 'en';
 
-export const mr = {
+const mrCore = {
   /* ---------------------------------------------------------- app chrome */
   'brand.name': 'AIEC',
   'brand.tagline': 'उंच इमारती, सुरक्षित भविष्य',        // [REF]
@@ -212,7 +214,7 @@ export const mr = {
   'gate.who': 'कोण उघडू शकते',
   'gate.need': 'काय आवश्यक आहे',
   'gate.next': 'नंतर काय होईल',
-  'gate.evidenceProgress': '{done} पैकी {total} पूर्ण',
+  'gate.evidenceProgress': '{total} पैकी {done} पूर्ण',
 
   /* ------------------------------------------------------- offline §13 */
   'offline.title': 'ऑफलाइन — तुमचे काम सुरक्षित आहे',
@@ -231,10 +233,13 @@ export const mr = {
   'common.of': '/',
 } as const;
 
+/** The full Marathi dictionary: core rider surfaces plus the record flow. */
+export const mr = { ...mrCore, ...mrRecords } as const;
+
 export type StringKey = keyof typeof mr;
 
 /** English is the expansion-test locale, not the primary. */
-export const en: Record<StringKey, string> = {
+const enCore: Record<keyof typeof mrCore, string> = {
   'brand.name': 'AIEC',
   'brand.tagline': 'Tall buildings, safe futures',
   'chrome.city': 'Pune',
@@ -424,6 +429,8 @@ export const en: Record<StringKey, string> = {
   'common.optional': 'Optional',
   'common.of': '/',
 };
+
+export const en: Record<StringKey, string> = { ...enCore, ...enRecords };
 
 export const DICTIONARIES: Record<Lang, Record<StringKey, string>> = {
   mr: mr as unknown as Record<StringKey, string>,

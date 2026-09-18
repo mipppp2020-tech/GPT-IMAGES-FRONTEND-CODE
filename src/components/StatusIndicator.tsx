@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { Icon, type IconName } from './Icon';
 import { useI18n } from '@/i18n';
 import { LIFECYCLE_LABEL_KEY, type LifecycleState, type StatusGrammar, type Custody } from '@/domain/lifecycle';
 import type { StringKey } from '@/i18n/strings';
@@ -26,19 +27,25 @@ export function StatusIndicator({
   variant = 'compact',
   bare = false,
   dot = false,
+  icon,
 }: {
   status: StatusGrammar;
   variant?: 'compact' | 'full';
   bare?: boolean;
   /** The map legend carries dots; list chips read as tinted pills. */
   dot?: boolean;
+  /**
+   * Record-list chips carry a state glyph rather than a dot, so the state is
+   * legible from shape as well as colour.
+   */
+  icon?: IconName;
 }) {
   const { t } = useI18n();
   const label = status.chipLabel ?? t(LIFECYCLE_LABEL_KEY[status.state] as StringKey);
 
   const pill = (
     <span className={`aiec-status${bare ? ' aiec-status--bare' : ''}`} style={lifecycleVars(status.state)}>
-      {dot ? <span className="aiec-status__dot" /> : null}
+      {icon ? <Icon name={icon} size={13} /> : dot ? <span className="aiec-status__dot" /> : null}
       {label}
     </span>
   );

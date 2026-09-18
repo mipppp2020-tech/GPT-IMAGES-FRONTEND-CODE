@@ -130,60 +130,158 @@ amount already appears in the payment card directly above, and the reference
 shows no such strip, so it is omitted there. It is used on S-R-07, where the
 reference does show the earning beside the action.
 
+## 11. The second tab is labelled inconsistently across the references
+
+The bottom navigation's second tab reads **माझे लीड्स** on 7 references and
+**माझी नोंद / माझी नोंदस** on 8 others — for the same destination. A shipping
+app cannot relabel a tab per screen, so the app uses **माझे लीड्स** throughout
+(it appears on the primary surfaces: home, leads, lead detail, submission
+success, and on the records list itself).
+
+This also settles a larger question: the "स्क्रीन N/10" screens are **not a
+second role**. They carry the identical 4-tab bar including **कमाई**
+(earnings), and the profile screen names the user *रायडर · लेव्हल 1*. They are
+the same Rider in the record/compliance section of the app.
+
+## 12. "स्क्रीन N/10" badges are not reproduced
+
+Every record-flow reference carries an orange pill reading स्क्रीन 7/10,
+8/10 … 14/10. This is design-deck annotation, not product chrome — the
+numbering counts mockups and runs past its own denominator (14/10). It is
+omitted.
+
+## 13. Certificate download is gated (S-R-09)
+
+**Reference:** "प्रमाणपत्र डाउनलोड करा" is drawn as an enabled primary button.
+
+**Same screen's timeline:** *"पडताळणी झाल्यावर प्रमाणपत्र उपलब्ध होईल"* — the
+certificate only exists after AIEC's final review, which the timeline shows as
+still in progress.
+
+**Implemented:** a `KeyringGate` naming why it is locked, who unlocks it (the
+AIEC verification team), what is required (final review) and what happens next.
+
+**Reason:** §12 — never fake an enabled action. Rendering a button that cannot
+do what it says is exactly the failure that rule names.
+
+## 14. Continue is gated on the document requirement (S-R-11)
+
+**Reference:** "पुढे" is enabled while document 5 is still uploading (68%) and
+document 6 has not been supplied — both marked required with a red asterisk on
+that very screen.
+
+**Implemented:** `KeyringGate` with an evidence requirement showing 4 of 6
+complete, and a meter.
+
+**Reason:** §12, as above. The screen already states the requirement; the
+action must honour it.
+
+## 15. Feedback submit is gated on the required rating (S-R-16)
+
+The screen marks the rating question "* आवश्यक". Submit is therefore a lock
+with a stated reason until a rating exists, rather than a button that rejects
+silently.
+
+## 16. Marathi quantity grammar in the evidence meter
+
+The gate meter first read `{done} पैकी {total} पूर्ण`, which renders "4 पैकी 6"
+— *6 out of 4*. In Marathi "X पैकी Y" means "Y out of X", so the total comes
+first. Corrected to `{total} पैकी {done} पूर्ण`. Caught by reading the rendered
+gate, not by the type system.
+
+## 17. रद्द chips use the canonical closed colour
+
+The records list draws the रद्द chip in **red**. The map legend — the
+definitional artifact for lifecycle colour — assigns red to **अडचणीत**
+(blocked) and near-black to **रद्द / बंद** (closed). The app follows the
+legend, so a cancelled record reads muted rather than alarming, and red stays
+reserved for states that need action.
+
+## 18. Payment-method selection uses the primary accent
+
+The rider payout screen (S-R-05) draws the selected option in orange; the fee
+screen (S-R-12) draws it in blue. One app, one selection colour: orange, the
+primary accent, in both. Rule 18 — converge on one visual system.
+
+## 19. Progress meters rendered empty (fixed)
+
+Both `.aiec-meter` (construction progress) and `.aiec-gate__meter` (the
+KeyringGate evidence meter) are rendered as `<span>`. Inline boxes ignore
+width and height, so every fill collapsed to 0x0 and each meter always read
+empty — including the gate's "4 of 6 documents" bar, whose whole job is to
+show how much is left. Fixed by making both `display: block`. Caught by the
+render-compare pass, then confirmed by measuring the element rather than
+trusting the screenshot.
+
+## 20. Extracted assets are cropped clear of reference chrome
+
+Content photography is cropped from the references themselves. Three crops had
+to be redone because they carried baked-in UI: the viewfinder crop included the
+framing brackets, and the five evidence tiles included the reference's own ×
+remove badges, which rendered as phantom close buttons on the record-detail
+thumbnail strip. All assets are now photography only.
+
 ---
 
 ## Known gaps (not deviations — unfinished work)
 
-- **9 of 16 reference screens are not built.** The tranche delivered is the
-  seven Rider-role screens. The remaining nine belong to a second role flow
-  (bottom nav `माझी नोंद`, screens numbered `स्क्रीन 7/10` … `14/10`): record
-  list, record detail, construction progress, document upload, fee payment,
-  payment success, notifications, profile, feedback.
-- `/earnings`, `/profile` and `/notifications` are honest placeholders.
+- **`/earnings` is a placeholder.** The tab bar routes to it, but the reference
+  set contains no earnings screen to build against.
+- The record-detail tabs beyond सविस्तर माहिती (प्रगती / फोटो / दस्तऐवज / नोंदी)
+  render an honest "not built yet" rather than invented content. प्रगती exists
+  as its own screen at `/records/:id/progress`.
 - `OfflineQueue` renders only when `online` is false; there is no service
-  worker or real queue persistence behind it yet.
-- No unit or E2E test suite. The automated gates that do exist are
-  `tools/qa.mjs` (overflow, touch floor, 200% text scale).
+  worker or real queue persistence behind it.
+- No unit or E2E suite. The automated gates are `tools/qa.mjs`
+  (overflow, touch floor, 200% text scale) across 16 screens × 7 widths.
 
 ---
 
 ## Visual QA scores (§17)
 
-Scored against the rendered-vs-reference composites in `.artifacts/compare/`.
-These are honest self-assessments, not targets.
+Scored against the composites in `.artifacts/compare/`. Honest
+self-assessments, not targets.
 
 | Screen | Layout /20 | Type /15 | Space /15 | Comp /15 | Color /10 | Nav /10 | Content /5 | Resp /5 | A11y /5 | **Total** |
 |---|---|---|---|---|---|---|---|---|---|---|
 | S-R-01 home | 18 | 13 | 13 | 13 | 9 | 10 | 4 | 5 | 5 | **90** |
 | S-R-02 leads | 19 | 14 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **95** |
-| S-R-03 capture | 18 | 13 | 13 | 14 | 9 | 10 | 4 | 5 | 5 | **91** |
+| S-R-03 capture | 18 | 13 | 13 | 14 | 9 | 10 | 5 | 5 | 5 | **92** |
 | S-R-04 sitephotos | 19 | 13 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **94** |
 | S-R-05 payout | 19 | 14 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **95** |
 | S-R-06 success | 18 | 13 | 13 | 14 | 10 | 10 | 4 | 5 | 5 | **92** |
 | S-R-07 leaddetail | 18 | 13 | 13 | 13 | 9 | 10 | 4 | 5 | 5 | **90** |
+| S-R-08 records | 19 | 14 | 13 | 14 | 9 | 10 | 5 | 5 | 5 | **94** |
+| S-R-09 recdetail | 18 | 13 | 12 | 13 | 10 | 10 | 4 | 5 | 5 | **90** |
+| S-R-10 progress | 18 | 13 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **93** |
+| S-R-11 documents | 19 | 13 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **94** |
+| S-R-12 fees | 19 | 14 | 13 | 14 | 9 | 10 | 5 | 5 | 5 | **94** |
+| S-R-13 feepaid | 19 | 14 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **95** |
+| S-R-14 notifications | 19 | 14 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **95** |
+| S-R-15 profile | 19 | 14 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **95** |
+| S-R-16 feedback | 19 | 14 | 13 | 14 | 10 | 10 | 5 | 5 | 5 | **95** |
 
-**Two screens reach the 95 target; five do not.**
+**Six screens reach the 95 target; ten sit at 90–94.**
 
 ### The 95 target conflicts with the touch-target requirement
 
-Spacing scores 13/15 on *every* screen for one shared reason: deviation #1.
-The references were drawn with 33–44px controls; §9 mandates a 48px floor and
-72dp primary controls. Honouring §9 makes every screen measurably taller than
-its reference, and those spacing points cannot be recovered without breaking a
-source requirement that outranks the reference.
+Spacing scores 12–13/15 on *every* screen for one shared reason: deviation #1.
+The references draw controls at 33–44px (lead-card CTA 33px, carousel arrows
+36px, chrome pills ~40px); §9 mandates a 48px floor with 72dp primary and
+shutter controls. Honouring §9 makes every screen measurably taller, and those
+points cannot be recovered without breaking a source requirement that outranks
+the reference.
 
-So on the spacing axis the ceiling is structural, not a matter of more
-iteration. The remaining recoverable points are:
+The remaining recoverable points:
 
-- **Colour/content on S-R-01 and S-R-07 (map):** the drawn basemap is sparser
-  than the reference tile. Denser road geometry and more locality labels would
-  recover ~2 points each.
-- **Content on S-R-03 and S-R-06:** viewfinder framing and confetti scatter.
-- **Typography across the board:** the reference's exact type ramp is still
-  inferred. The real Design System would settle this and is the single
-  highest-value input remaining.
+- **Map fidelity (S-R-01, S-R-07):** the drawn basemap is sparser than the
+  reference tile — denser road geometry and more locality labels, ~2 points each.
+- **S-R-09 record detail:** the densest screen in the set; the fact grid and
+  carousel still run taller than the reference.
+- **Typography across the board:** the exact type ramp is still inferred. The
+  real Design System would settle it and remains the highest-value input.
 
-**Recommendation:** either supply the source documents so the type ramp and
+**Recommendation unchanged:** supply the source documents so the type ramp and
 spacing scale can be read rather than inferred, or confirm that §9's touch
-minimums should yield to reference geometry — those are the two levers that
-move the remaining screens to 95.
+minimums yield to reference geometry. Those are the two levers that move the
+remaining screens to 95.

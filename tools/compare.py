@@ -5,7 +5,7 @@ are normalised to a common height so composition, density and vertical rhythm
 can be judged directly against each other.
 """
 from PIL import Image, ImageDraw
-import os, sys
+import os, sys, re
 
 REF_DIR = os.environ.get(
     'AIEC_REFS',
@@ -15,15 +15,11 @@ REF_DIR = os.environ.get(
 SHOTS = '.artifacts/shots'
 OUT = '.artifacts/compare'
 
-PAIRS = [
-    ('S-R-01-home', 'a_tall_smartphone_ui_screenshot_in_marathi_of_a_ma.png'),
-    ('S-R-02-leads', 'a_vertical_smartphone_screenshot_of_a_marathi_app.png'),
-    ('S-R-03-capture', 'a_tall_smartphone_ui_screenshot_mobile_app_with.png'),
-    ('S-R-04-sitephotos', 'a_smartphone_app_screenshot_ui_portrait_mobile_sc.png'),
-    ('S-R-05-payout', 'a_vertical_smartphone_app_ui_screenshot_clean_mob.png'),
-    ('S-R-06-success', 'a_clean_mobile_app_success_confirmation_screen_sm.png'),
-    ('S-R-07-leaddetail', 'a_clean_mobile_app_ui_screenshot_portrait_fixed.png'),
-]
+PAIRS = []
+for line in open('tools/screens.mjs', encoding='utf-8'):
+    m = re.search(r"id: '([^']+)'.*?ref: '([^']+)'", line)
+    if m:
+        PAIRS.append((m.group(1), m.group(2)))
 
 H = 900
 os.makedirs(OUT, exist_ok=True)

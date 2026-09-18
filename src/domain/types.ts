@@ -66,3 +66,84 @@ export interface QueuedAction {
   createdAt: string;
   sizeLabel: string;
 }
+
+/* =========================================================================
+   RECORD / COMPLIANCE FLOW (S-R-08 … S-R-16)
+
+   A SiteRecord is the registered construction site a lead becomes once AIEC
+   accepts it. The rider services it: uploads statutory documents, pays the
+   municipal fee, and tracks construction to handover.
+
+   Role boundary still holds — a record carries the fee the rider actually
+   paid, never the commercial value of the installation.
+   ========================================================================= */
+
+export interface SiteRecord {
+  id: string;
+  reference: string;
+  siteName: string;
+  locality: string;
+  pincode: string;
+  status: import('./lifecycle').StatusGrammar;
+  /** Display string, e.g. "16 ऑग, 2025, 10:24 AM". */
+  recordedAt: string;
+  /** Compact form for lists, e.g. "G + 4". */
+  floors: string;
+  /** Full form for the detail fact grid, e.g. "G + 4 (एकूण 5)". */
+  floorsFull: string;
+  /** Flat count shown beside the floor spec in the list. */
+  flats: number;
+  ownerName: string;
+  thumbnailId: BuildingThumb;
+  feePaidPaise: number;
+  flatNo?: string;
+  buildingType: 'residential';
+}
+
+/** A statutory document the site must supply before the record can proceed. */
+export interface DocumentRequirement {
+  id: string;
+  titleKey: string;
+  subtitleKey: string;
+  icon: 'building' | 'pin' | 'image' | 'list' | 'helmet' | 'shield';
+  tone: 'done' | 'installing' | 'new';
+  required: boolean;
+  state: DocumentState;
+}
+
+export type DocumentState =
+  | { kind: 'uploaded'; at: string }
+  | { kind: 'uploading'; pct: number }
+  | { kind: 'missing' };
+
+export function isDocumentSatisfied(d: DocumentRequirement): boolean {
+  return d.state.kind === 'uploaded';
+}
+
+/** One stage of the build, as shown on the construction-progress screen. */
+export interface ProgressStage {
+  id: string;
+  titleKey: string;
+  state: 'done' | 'running' | 'pending';
+  /** Pre-formatted date phrase, already localised at the fixture level. */
+  dateKey: string;
+  dateValue: string;
+  detail?: {
+    bodyKey: string;
+    pct: number;
+    photos: { src: string; captionKey: string }[];
+  };
+}
+
+export interface AiecNotification {
+  id: string;
+  titleKey: string;
+  bodyKey: string;
+  at: string;
+  /** Drives both the icon tone and the card surface. */
+  tone: 'done' | 'selling' | 'material' | 'installing' | 'new';
+  icon: 'check-circle' | 'image' | 'clock' | 'info' | 'bell';
+  actionKey?: string;
+  unread?: boolean;
+  category: 'unread' | 'important' | 'system' | 'other';
+}

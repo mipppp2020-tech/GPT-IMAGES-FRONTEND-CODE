@@ -6,20 +6,19 @@ import { RiderSitePhotos } from '@/screens/RiderSitePhotos';
 import { RiderPayout } from '@/screens/RiderPayout';
 import { RiderSuccess } from '@/screens/RiderSuccess';
 import { RiderLeadDetail } from '@/screens/RiderLeadDetail';
+import { RiderRecords } from '@/screens/RiderRecords';
+import { RiderRecordDetail } from '@/screens/RiderRecordDetail';
+import { RiderProgress } from '@/screens/RiderProgress';
+import { RiderDocuments } from '@/screens/RiderDocuments';
+import { RiderFees } from '@/screens/RiderFees';
+import { RiderFeePaid } from '@/screens/RiderFeePaid';
+import { RiderNotifications } from '@/screens/RiderNotifications';
+import { RiderProfile } from '@/screens/RiderProfile';
+import { RiderFeedback } from '@/screens/RiderFeedback';
 import { Placeholder } from '@/screens/Placeholder';
 
-/** Screen IDs map 1:1 to routes so the capture harness can address them. */
-export const SCREEN_ROUTES = [
-  { id: 'S-R-01-home', path: '/' },
-  { id: 'S-R-02-leads', path: '/leads' },
-  { id: 'S-R-03-capture', path: '/capture' },
-  { id: 'S-R-04-sitephotos', path: '/photos' },
-  { id: 'S-R-05-payout', path: '/payout' },
-  { id: 'S-R-06-success', path: '/success' },
-  { id: 'S-R-07-leaddetail', path: '/leads/l1' },
-] as const;
-
 export const router = createBrowserRouter([
+  /* Lead flow */
   { path: '/', element: <RiderHome /> },
   { path: '/leads', element: <RiderLeads /> },
   { path: '/leads/:id', element: <RiderLeadDetail /> },
@@ -27,7 +26,18 @@ export const router = createBrowserRouter([
   { path: '/photos', element: <RiderSitePhotos /> },
   { path: '/payout', element: <RiderPayout /> },
   { path: '/success', element: <RiderSuccess /> },
+
+  /* Record / compliance flow */
+  { path: '/records', element: <RiderRecords /> },
+  { path: '/records/:id', element: <RiderRecordDetail /> },
+  { path: '/records/:id/progress', element: <RiderProgress /> },
+  { path: '/records/:id/documents', element: <RiderDocuments /> },
+  { path: '/records/:id/fees', element: <RiderFees /> },
+  { path: '/records/:id/fees/paid', element: <RiderFeePaid /> },
+
+  /* Account */
+  { path: '/notifications', element: <RiderNotifications /> },
+  { path: '/profile', element: <RiderProfile /> },
+  { path: '/feedback', element: <RiderFeedback /> },
   { path: '/earnings', element: <Placeholder titleKey="tab.earnings" /> },
-  { path: '/profile', element: <Placeholder titleKey="tab.profile" /> },
-  { path: '/notifications', element: <Placeholder titleKey="chrome.notifications" /> },
 ]);
