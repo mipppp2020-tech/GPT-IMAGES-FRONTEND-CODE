@@ -17,6 +17,9 @@ import { ShaftReadinessScreen } from './screens/customer/ShaftReadinessScreen'
 import { TechnicianLayout } from './layout/TechnicianLayout'
 import { TechnicianTodayScreen } from './screens/technician/TechnicianTodayScreen'
 import { TechEarningsScreen } from './screens/technician/TechEarningsScreen'
+import { QcLayout } from './layout/QcLayout'
+import { QcQueueScreen } from './screens/qc/QcQueueScreen'
+import { QcChecklistScreen } from './screens/qc/QcChecklistScreen'
 
 function App() {
   return (
@@ -49,8 +52,12 @@ function App() {
           <Route path="/technician/earnings" element={<TechEarningsScreen />} />
         </Route>
 
+        <Route element={<QcLayout />}>
+          <Route path="/qc" element={<QcQueueScreen />} />
+          <Route path="/qc/:leadId/:type" element={<QcChecklistScreen />} />
+        </Route>
+
         {/* Stubs — each replaced by its own phase's real screens, one at a time */}
-        <Route path="/qc" element={<RoleStubScreen role="qc" />} />
         <Route path="/supplier" element={<RoleStubScreen role="supplier" />} />
         <Route path="/admin" element={<RoleStubScreen role="admin" />} />
         <Route path="/owner" element={<RoleStubScreen role="owner" />} />

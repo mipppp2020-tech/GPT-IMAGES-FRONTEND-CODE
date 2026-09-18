@@ -84,6 +84,28 @@ export interface TechJob {
   startedAt: number | null
 }
 
+export type QcVerdict = 'pass' | 'conditional' | 'fail'
+export type QcInspectionType = 'shaft' | 'final'
+
+export interface QcChecklistItem {
+  id: string
+  group: string
+  label: string
+  verdict: QcVerdict | null
+  photo: string | null
+  note: string
+}
+
+export interface Inspection {
+  id: string
+  leadId: string
+  type: QcInspectionType
+  stage: 'offered' | 'checked_in' | 'signed'
+  items: QcChecklistItem[]
+  result: 'cleared' | 'rework' | null
+  signedAt: number | null
+}
+
 export type WalletState = 'pending' | 'cleared'
 
 export interface WalletEntry {

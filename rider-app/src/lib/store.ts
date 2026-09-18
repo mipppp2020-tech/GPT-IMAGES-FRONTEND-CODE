@@ -1,10 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Lead, WalletEntry, RiderProfile, Quote, TechJob, SopStepStatus } from './types'
+import type { Lead, WalletEntry, RiderProfile, Quote, TechJob, SopStepStatus, Inspection, QcInspectionType, QcVerdict } from './types'
 import { DEMO_RIDER, SEED_LEADS, seedWalletEntries } from './mock'
 import { nextWalletId } from './ids'
 import { defaultShaftReadiness, emptyPayments } from './customerJourney'
 import { SOP_TEMPLATE, JOB_ON_TIME_BONUS } from './sop'
+import { buildChecklist, QC_FEES } from './qcChecklists'
 
 export interface Appeal {
   id: string
@@ -23,6 +24,8 @@ interface RiderStore {
   techWallet: WalletEntry[]
   techJobs: TechJob[]
   appeals: Appeal[]
+  qcWallet: WalletEntry[]
+  inspections: Inspection[]
   rideActive: boolean
   online: boolean
   lastCoinEvent: { amount: number; label: string; cause: string; consequence: string } | null
@@ -48,6 +51,13 @@ interface RiderStore {
   fileAppeal: (leadId: string, stepId: string, reason: string) => void
   resolveAppeal: (appealId: string, uphold: boolean) => void
   addTechWalletEntry: (entry: WalletEntry) => void
+
+  startInspection: (leadId: string, type: QcInspectionType) => void
+  checkInInspection: (inspectionId: string) => void
+  setQcVerdict: (inspectionId: string, itemId: string, verdict: QcVerdict) => void
+  setQcNote: (inspectionId: string, itemId: string, note: string) => void
+  captureQcPhoto: (inspectionId: string, itemId: string, dataUrl: string) => void
+  signOffInspection: (inspectionId: string) => void
 }
 
 export const useAiecStore = create<RiderStore>()(
@@ -59,6 +69,8 @@ export const useAiecStore = create<RiderStore>()(
       techWallet: [],
       techJobs: [],
       appeals: [],
+      qcWallet: [],
+      inspections: [],
       rideActive: false,
       online: typeof navigator !== 'undefined' ? navigator.onLine : true,
       lastCoinEvent: null,
@@ -342,6 +354,107 @@ export const useAiecStore = create<RiderStore>()(
             consequence: entry.consequence,
           },
         })),
+
+      // PRD §14.1: "role separation — QC never installs." Structurally a
+      // completely different actor's wallet/queue from Technician's, even
+      // though both work the same lead.
+      startInspection: (leadId, type) =>
+        set((s) => {
+          if (s.inspections.some((i) => i.leadId === leadId && i.type === type && i.result === null)) return s
+          return {
+            inspections: [
+              ...s.inspections,
+              { id: `QCIN-${Date.now()}`, leadId, type, stage: 'offered', items: buildChecklist(type), result: null, signedAt: null },
+            ],
+          }
+        }),
+
+      checkInInspection: (inspectionId) =>
+        set((s) => ({
+          inspections: s.inspections.map((i) => (i.id === inspectionId ? { ...i, stage: 'checked_in' } : i)),
+        })),
+
+      setQcVerdict: (inspectionId, itemId, verdict) =>
+        set((s) => ({
+          inspections: s.inspections.map((i) =>
+            i.id !== inspectionId
+              ? i
+              : { ...i, items: i.items.map((it) => (it.id === itemId ? { ...it, verdict } : it)) },
+          ),
+        })),
+
+      setQcNote: (inspectionId, itemId, note) =>
+        set((s) => ({
+          inspections: s.inspections.map((i) =>
+            i.id !== inspectionId
+              ? i
+              : { ...i, items: i.items.map((it) => (it.id === itemId ? { ...it, note } : it)) },
+          ),
+        })),
+
+      captureQcPhoto: (inspectionId, itemId, dataUrl) =>
+        set((s) => ({
+          inspections: s.inspections.map((i) =>
+            i.id !== inspectionId
+              ? i
+              : { ...i, items: i.items.map((it) => (it.id === itemId ? { ...it, photo: dataUrl } : it)) },
+          ),
+        })),
+
+      // PRD §14.1 flow: ALL PASS -> cleared, drawings released, material
+      // allocated (Gate 2) — here, the lead moving to in_transit. ANY FAIL
+      // -> rework list back to the customer, annotated, re-inspection
+      // implied by shaft-readiness simply being reopened. §14.2's final
+      // audit clearing is what actually completes the lift (NOC-eligible
+      // on the Customer screen) — the one thing Technician alone can never
+      // do, per Non-Negotiable #3.
+      signOffInspection: (inspectionId) => {
+        const inspection = get().inspections.find((i) => i.id === inspectionId)
+        if (!inspection) return
+        const anyFail = inspection.items.some((it) => it.verdict === 'fail')
+        const result = anyFail ? 'rework' : 'cleared'
+
+        set((s) => ({
+          inspections: s.inspections.map((i) =>
+            i.id === inspectionId ? { ...i, stage: 'signed', result, signedAt: Date.now() } : i,
+          ),
+        }))
+
+        set((s) => ({
+          leads: s.leads.map((l) => {
+            if (l.id !== inspection.leadId) return l
+            if (result === 'cleared' && inspection.type === 'shaft') return { ...l, status: 'in_transit' }
+            if (result === 'cleared' && inspection.type === 'final') return { ...l, status: 'complete' }
+            if (result === 'rework' && inspection.type === 'shaft' && l.shaftReadiness) {
+              return { ...l, shaftReadiness: l.shaftReadiness.map((it) => ({ ...it, done: false })) }
+            }
+            return l
+          }),
+        }))
+
+        const lead = get().leads.find((l) => l.id === inspection.leadId)
+        set((s) => ({
+          qcWallet: [
+            {
+              id: nextWalletId(),
+              amount: QC_FEES[inspection.type],
+              label: inspection.type === 'shaft' ? 'शाफ्ट तपासणी' : 'अंतिम तपासणी',
+              cause: lead?.buildingName ?? inspection.leadId,
+              consequence: result === 'cleared' ? 'क्लिअर — पुढील टप्पा अनलॉक झाला' : 'रिवर्क यादी पाठवली',
+              state: 'cleared',
+              leadId: inspection.leadId,
+              createdAt: Date.now(),
+            },
+            ...s.qcWallet,
+          ],
+          lastCoinEvent: {
+            amount: QC_FEES[inspection.type],
+            label: inspection.type === 'shaft' ? 'शाफ्ट तपासणी' : 'अंतिम तपासणी',
+            cause: lead?.buildingName ?? inspection.leadId,
+            consequence: result === 'cleared' ? 'क्लिअर' : 'रिवर्क यादी पाठवली',
+          },
+        }))
+      },
     }),
     { name: 'aiec-rider-store' },
   ),
