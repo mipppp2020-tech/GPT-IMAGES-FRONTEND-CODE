@@ -14,6 +14,17 @@ export interface LeadPhotos {
   contact: string | null
 }
 
+/** Margin is markup-over-cost — (offer - baseCost) / baseCost — matching the
+ * PRD §10 worked example exactly: ₹8,00,000 list on ₹5,00,000 cost is "60%
+ * negotiation margin," ₹6,00,000 is "the 20% floor." Not margin-over-price. */
+export interface Quote {
+  baseCost: number
+  listPrice: number
+  botFloor: number
+  hardFloor: number
+  currentOffer: number
+}
+
 export interface Lead {
   id: string // MH-PUN-{ZONE}-LEAD-nnnn-x
   buildingName: string
@@ -35,6 +46,7 @@ export interface Lead {
   synced: boolean
   newGroundBonus: boolean
   aiTip?: string
+  quote?: Quote
 }
 
 export type WalletState = 'pending' | 'cleared'

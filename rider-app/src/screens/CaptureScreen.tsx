@@ -39,6 +39,7 @@ export function CaptureScreen() {
   const online = useAiecStore((s) => s.online)
   const addLead = useAiecStore((s) => s.addLead)
   const addWalletEntry = useAiecStore((s) => s.addWalletEntry)
+  const advanceLeadStatus = useAiecStore((s) => s.advanceLeadStatus)
 
   const opportunityId = (location.state as { opportunityId?: string } | null)?.opportunityId
   const opportunity = OPPORTUNITY_SITES.find((o) => o.id === opportunityId)
@@ -184,6 +185,13 @@ export function CaptureScreen() {
         createdAt: Date.now(),
       })
       setStep('done')
+      // PRD §9.1: score >= 70 routes to an automated sequence within 60s.
+      // A full-price capture cleared quality, so it's Hot; simulate that
+      // routing landing it in the Sales pipeline shortly after — the
+      // visible, cross-role proof that this isn't a dead-end status.
+      if (payout === 40) {
+        setTimeout(() => advanceLeadStatus(id), 4000)
+      }
     }
 
     setTimeout(doCommit, online ? 500 : 200)
