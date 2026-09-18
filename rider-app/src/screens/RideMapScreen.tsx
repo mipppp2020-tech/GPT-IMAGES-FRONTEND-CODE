@@ -1,10 +1,10 @@
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TopBar } from '../components/TopBar'
 import { MoneyMeter } from '../components/MoneyMeter'
-import { LIFECYCLE } from '../lib/lifecycle'
+import { RiderMap } from '../components/RiderMap'
 import { useRiderStore } from '../lib/store'
 import { OPPORTUNITY_SITES } from '../lib/mock'
-import { project } from '../lib/mapProject'
 import { useGeolocation } from '../lib/useGeolocation'
 import { distanceMeters } from '../lib/geo'
 import { leadsCapturedToday, walletStats, formatINR } from '../lib/selectors'
@@ -20,12 +20,19 @@ export function RideMapScreen() {
   const todayCount = leadsCapturedToday(leads)
   const { weekTotal } = walletStats(wallet)
   const here = { lat: geo.lat, lng: geo.lng }
-  const myPos = project(here.lat, here.lng)
 
-  const nearby = OPPORTUNITY_SITES.map((o) => ({
-    ...o,
-    distance: Math.round(distanceMeters(here, o)),
-  })).sort((a, b) => a.distance - b.distance)
+  // Recomputed only when position or leads actually change — not on every
+  // unrelated re-render (e.g. a wallet update elsewhere) — since this array
+  // feeds the map's marker-rebuild effect, and a fresh array identity there
+  // means clearing and redrawing every pin for no reason.
+  const nearby = useMemo(
+    () =>
+      OPPORTUNITY_SITES.map((o) => ({
+        ...o,
+        distance: Math.round(distanceMeters(here, o)),
+      })).sort((a, b) => a.distance - b.distance),
+    [here.lat, here.lng],
+  )
 
   return (
     <div>
@@ -43,57 +50,15 @@ export function RideMapScreen() {
         <StatTile value={`₹${formatINR(weekTotal)}`} label="आठवड्याची कमाई" />
       </div>
 
-      {/* Stylised opportunity map — pins carry lifecycle colour + shape, never tile imagery, so it stays legible in glare and works with zero network. */}
-      <div className="mx-4 mt-4 rounded-2xl overflow-hidden border border-black/10 relative h-64 bg-[#EAF1E9]">
-        <div className="absolute inset-0 opacity-40" style={{
-          backgroundImage:
-            'linear-gradient(#cfe0cd 1px, transparent 1px), linear-gradient(90deg, #cfe0cd 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }} />
-
-        {nearby.map((o) => {
-          const p = project(o.lat, o.lng)
-          return (
-            <button
-              key={o.id}
-              onClick={() => navigate('/capture', { state: { opportunityId: o.id } })}
-              className="absolute -translate-x-1/2 -translate-y-full flex flex-col items-center animate-pin-drop"
-              style={{ left: `${p.x}%`, top: `${p.y}%` }}
-              aria-label={o.buildingName}
-            >
-              <PinGlyph color="var(--color-life-new)" />
-            </button>
-          )
-        })}
-
-        {leads.slice(0, 6).map((l) => {
-          const p = project(l.lat, l.lng)
-          const meta = LIFECYCLE[l.status]
-          return (
-            <div
-              key={l.id}
-              className="absolute -translate-x-1/2 -translate-y-full"
-              style={{ left: `${p.x}%`, top: `${p.y}%` }}
-              title={l.buildingName}
-            >
-              <PinGlyph color={meta.color} />
-            </div>
-          )
-        })}
-
-        <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-          style={{ left: `${myPos.x}%`, top: `${myPos.y}%` }}
-        >
-          <span className="w-4 h-4 rounded-full bg-[#1F6FEB] border-2 border-white shadow" />
-          <span className="mt-1 text-[11px] font-semibold bg-white/90 px-1.5 py-0.5 rounded shadow-sm">
-            आपले स्थान
-          </span>
-        </div>
-
-        <div className="absolute bottom-2 left-2 bg-white/90 rounded-lg px-2 py-1 text-[11px] text-ink-2">
-          पुणे
-        </div>
+      <div className="mx-4 mt-4">
+        <RiderMap
+          center={here}
+          myPosition={{ lat: geo.lat, lng: geo.lng, accuracy: geo.accuracy }}
+          leads={leads}
+          opportunities={nearby}
+          onOpportunityClick={(id) => navigate('/capture', { state: { opportunityId: id } })}
+          onLeadClick={(id) => navigate(`/leads/${id}`)}
+        />
       </div>
 
       <div className="px-4 mt-5">
@@ -172,20 +137,6 @@ function StatTile({ value, label }: { value: string; label: string }) {
       <p className="text-body font-extrabold tnum leading-tight">{value}</p>
       <p className="text-[11px] text-ink-2 leading-tight mt-0.5">{label}</p>
     </div>
-  )
-}
-
-function PinGlyph({ color }: { color: string }) {
-  return (
-    <svg width="26" height="32" viewBox="0 0 26 32" fill="none">
-      <path
-        d="M13 31C13 31 24 19.4 24 12A11 11 0 1 0 2 12C2 19.4 13 31 13 31Z"
-        fill={color}
-        stroke="white"
-        strokeWidth="1.5"
-      />
-      <circle cx="13" cy="12" r="4" fill="white" />
-    </svg>
   )
 }
 
