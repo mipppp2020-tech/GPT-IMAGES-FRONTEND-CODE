@@ -23,7 +23,7 @@ export const ROLES: RoleMeta[] = [
   { id: 'rider', label: 'रायडर', subtitle: 'लीड कॅप्चर करा, कमवा', path: '/', theme: null, emoji: '🏍️', live: true },
   { id: 'sales', label: 'सेल्स डेस्क', subtitle: 'सौदा बंद करा', path: '/sales', theme: 'sales', emoji: '📞', live: true },
   { id: 'customer', label: 'ग्राहक', subtitle: 'तुमची लिफ्ट ट्रॅक करा', path: '/customer', theme: 'customer', emoji: '🏢', live: true },
-  { id: 'technician', label: 'तंत्रज्ञ', subtitle: 'इंस्टॉल करा, कमवा', path: '/technician', theme: 'technician', emoji: '🔧', live: false },
+  { id: 'technician', label: 'तंत्रज्ञ', subtitle: 'इंस्टॉल करा, कमवा', path: '/technician', theme: 'technician', emoji: '🔧', live: true },
   { id: 'qc', label: 'QC इन्स्पेक्टर', subtitle: 'तपासा, प्रमाणित करा', path: '/qc', theme: 'qc', emoji: '🔍', live: false },
   { id: 'supplier', label: 'सप्लायर', subtitle: 'पॅक करा, पाठवा', path: '/supplier', theme: 'supplier', emoji: '📦', live: false },
   { id: 'admin', label: 'अॅडमिन', subtitle: 'शहर नियंत्रण', path: '/admin', theme: 'admin', emoji: '🖥️', live: false },

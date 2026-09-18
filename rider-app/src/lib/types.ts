@@ -65,6 +65,25 @@ export interface ShaftReadinessItem {
   photo: string | null
 }
 
+export type SopStepStatus = 'locked' | 'unlocked' | 'verified' | 'frozen'
+
+export interface SopStepState {
+  id: string
+  status: SopStepStatus
+  photos: (string | null)[]
+  failCount: number
+  lastFailReason: string | null
+}
+
+export type JobStage = 'offered' | 'accepted' | 'checked_in' | 'done'
+
+export interface TechJob {
+  leadId: string
+  stage: JobStage
+  steps: SopStepState[]
+  startedAt: number | null
+}
+
 export type WalletState = 'pending' | 'cleared'
 
 export interface WalletEntry {
