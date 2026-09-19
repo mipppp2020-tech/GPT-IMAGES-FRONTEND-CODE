@@ -165,6 +165,31 @@ export function AdminScreen() {
           })}
         </div>
       )}
+
+      {/* UX doc §2.8: "every admin decision is itself audited with an ID,
+       * a timestamp and a written reason... the audit log is what defends
+       * their judgement later." That data was already being recorded
+       * (adminDecisions, used to filter the queue) but never shown back
+       * to the admin anywhere — resolving an alert made their own reasoning
+       * disappear the moment it scrolled off screen. */}
+      {adminDecisions.length > 0 && (
+        <div className="px-4 mt-8 pb-6">
+          <p className="text-title font-extrabold mb-1">तुमचे निर्णय</p>
+          <p className="text-caption text-ink-2 mb-3">प्रत्येक निर्णयाचा कायमचा नोंद — नंतर तुमच्या निर्णयाचे समर्थन करण्यासाठी.</p>
+          <div className="space-y-2">
+            {adminDecisions.map((d) => (
+              <div key={d.id} data-testid={`decision-${d.id}`} className="rounded-xl border border-black/10 p-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-ink-2">{KIND_META[d.alertId.split(':')[0] as AlertKind]?.label ?? d.alertId.split(':')[0]}</span>
+                  <span className="text-[10px] text-ink-2">{new Date(d.createdAt).toLocaleTimeString('mr-IN', { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+                <p className="text-body font-bold mt-1">{d.label}</p>
+                <p className="text-caption text-ink-2 mt-0.5">"{d.reason}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
