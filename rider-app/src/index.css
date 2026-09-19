@@ -199,6 +199,35 @@
   --color-ink-2: #98a4ac;
 }
 
+/* The four roles above are dark by design (Slate, Command-dark, Executive)
+ * and had no light variant at all — so switching the toggle to day/light
+ * visibly did nothing on Technician/QC/Admin/Owner. This is the other
+ * half of the switch: forces those same four surface/ink tokens light
+ * when the app is in light mode, so the toggle is a real two-way switch
+ * everywhere, not just on the five roles that were already light-native. */
+.aiec-light [data-theme='technician'],
+.aiec-light [data-theme='qc'],
+.aiec-light [data-theme='admin'],
+.aiec-light [data-theme='owner'] {
+  --color-surface: #ffffff;
+  --color-surface-2: #f2f4f6;
+  --color-surface-3: #e7eaee;
+  --color-ink: #14181c;
+  --color-ink-2: #565e68;
+}
+
+/* Admin/Owner's --color-accent is a near-white value meant to read against
+ * their native near-black surface (an inverted "brightest thing on the
+ * page" accent) — on the light surface above it would be a near-invisible
+ * white-on-white button. Swap it to the same inversion the other way: dark
+ * fill, light text, which is exactly what "almost no colour, direction of
+ * travel only" means on a light background too. */
+.aiec-light [data-theme='admin'],
+.aiec-light [data-theme='owner'] {
+  --color-accent: #14181c;
+  --color-accent-ink: #ffffff;
+}
+
 html {
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;

@@ -18,6 +18,11 @@ export function useDarkMode() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('aiec-dark', dark)
+    // Explicit opposite class too (not just the absence of aiec-dark): the
+    // naturally-dark roles (Technician/QC/Admin/Owner) need a real light
+    // override to switch, which has to key off something — "not dark" on
+    // its own has no CSS hook to attach to.
+    document.documentElement.classList.toggle('aiec-light', !dark)
     try {
       localStorage.setItem(KEY, dark ? '1' : '0')
     } catch {
