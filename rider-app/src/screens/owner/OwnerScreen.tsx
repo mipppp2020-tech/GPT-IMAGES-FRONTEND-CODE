@@ -20,6 +20,7 @@ export function OwnerScreen() {
   const techJobs = useAiecStore((s) => s.techJobs)
   const inspections = useAiecStore((s) => s.inspections)
   const adminDecisions = useAiecStore((s) => s.adminDecisions)
+  const [showCashWhy, setShowCashWhy] = useState(false)
   const [showSeiWhy, setShowSeiWhy] = useState(false)
 
   const cash = computeCashPanel(leads, wallet, salesWallet, techWallet, qcWallet, supplierWallet)
@@ -33,7 +34,23 @@ export function OwnerScreen() {
 
       {/* Panel 1 — Cash, Live */}
       <section className="px-4 pt-4" data-testid="panel-cash">
-        <p className="text-caption font-bold text-ink-2 uppercase tracking-wide">आज — कॅश लाईव्ह</p>
+        <div className="flex items-center justify-between">
+          <p className="text-caption font-bold text-ink-2 uppercase tracking-wide">आज — कॅश लाईव्ह</p>
+          <button
+            onClick={() => setShowCashWhy((v) => !v)}
+            className="text-[11px] font-bold text-ink-2 underline underline-offset-2"
+            data-testid="cash-why-toggle"
+          >
+            हे कसे मोजले जाते?
+          </button>
+        </div>
+        {showCashWhy && (
+          <div className="mt-2 rounded-xl border border-white/10 p-3 text-caption text-ink-2" data-testid="cash-why-panel">
+            <p>एकूण इनफ्लो = टोकन (प्रत्येकी ₹10,000) + मटेरियल पेमेंट (ऑफरच्या 90%) + अंतिम पेमेंट — प्रत्येक ग्राहकाच्या पेमेंट टप्प्यांवरून थेट.</p>
+            <p className="mt-1.5">सप्लायर पेआउट व वर्कर पेआउट = प्रत्येक भूमिकेच्या वॉलेटमधील "क्लिअर" नोंदींची बेरीज — कोणतीही अंदाजित संख्या नाही.</p>
+            <p className="mt-1.5">NET MARGIN = एकूण इनफ्लो − सप्लायर पेआउट − वर्कर पेआउट.</p>
+          </div>
+        )}
         <div className="mt-2 space-y-1.5">
           <CashLine label={`टोकन जमा (${cash.tokensCount} सौदे)`} amount={cash.tokensAmount} />
           <CashLine label={`मटेरियल क्लिअर (${cash.materialCount} साईट्स)`} amount={cash.materialAmount} />
