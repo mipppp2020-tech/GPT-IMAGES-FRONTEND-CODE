@@ -38,6 +38,7 @@ export function RiderMap({
 }: RiderMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
+  const activeRef = useRef(false)
   const meMarkerRef = useRef<L.Marker | null>(null)
   const accuracyCircleRef = useRef<L.Circle | null>(null)
   const markerLayerRef = useRef<L.LayerGroup | null>(null)
@@ -57,6 +58,14 @@ export function RiderMap({
       zoom: 14,
       zoomControl: true,
       attributionControl: true,
+      // Dragging/touch-zoom start disabled — an inline map inside a
+      // scrolling page otherwise steals every swipe that starts over it
+      // (Leaflet preventDefaults touchmove to pan), which reads as the
+      // whole page's scroll randomly "sticking". Woken up by one tap.
+      dragging: false,
+      touchZoom: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
     })
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -99,6 +108,20 @@ export function RiderMap({
       onRemove: () => {},
     })
     new RecenterControl({ position: 'bottomright' }).addTo(map)
+
+    const activate = () => {
+      if (activeRef.current) return
+      activeRef.current = true
+      map.dragging.enable()
+      map.touchZoom.enable()
+      map.scrollWheelZoom.enable()
+      map.doubleClickZoom.enable()
+      if (containerRef.current) containerRef.current.style.touchAction = ''
+      const hint = containerRef.current?.querySelector('.aiec-map-hint')
+      if (hint) hint.remove()
+    }
+    map.once('click', activate)
+    containerRef.current.addEventListener('touchstart', activate, { once: true, passive: true })
 
     return () => {
       map.remove()
@@ -195,10 +218,16 @@ export function RiderMap({
   return (
     <div
       ref={containerRef}
-      style={{ height: heightPx }}
-      className="w-full rounded-2xl overflow-hidden border border-black/10"
+      style={{ height: heightPx, touchAction: 'pan-y' }}
+      className="w-full rounded-2xl overflow-hidden border border-black/10 relative"
       role="application"
       aria-label="रायडर नकाशा"
-    />
+    >
+      <div className="aiec-map-hint pointer-events-none absolute inset-x-0 bottom-2 flex justify-center z-[1000]">
+        <span className="rounded-full bg-black/60 text-white text-[11px] font-semibold px-3 py-1">
+          नकाशा हलवण्यासाठी टॅप करा
+        </span>
+      </div>
+    </div>
   )
 }
