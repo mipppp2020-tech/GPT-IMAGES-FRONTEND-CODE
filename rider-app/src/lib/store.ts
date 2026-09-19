@@ -438,7 +438,8 @@ export const useAiecStore = create<RiderStore>()(
           leads: s.leads.map((l) => {
             if (l.id !== inspection.leadId) return l
             if (result === 'cleared' && inspection.type === 'shaft') return { ...l, status: 'in_transit' }
-            if (result === 'cleared' && inspection.type === 'final') return { ...l, status: 'complete' }
+            if (result === 'cleared' && inspection.type === 'final')
+              return { ...l, status: 'complete', payments: { ...(l.payments ?? emptyPayments()), final: true } }
             if (result === 'rework' && inspection.type === 'shaft' && l.shaftReadiness) {
               return { ...l, shaftReadiness: l.shaftReadiness.map((it) => ({ ...it, done: false })) }
             }
