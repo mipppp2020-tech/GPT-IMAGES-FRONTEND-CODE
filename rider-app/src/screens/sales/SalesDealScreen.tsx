@@ -16,6 +16,7 @@ export function SalesDealScreen() {
   const navigate = useNavigate()
   const leads = useAiecStore((s) => s.leads)
   const closeDeal = useAiecStore((s) => s.closeDeal)
+  const salesWallet = useAiecStore((s) => s.salesWallet)
   const lead = leads.find((l) => l.id === id)
 
   const baseQuote = useMemo(() => (lead ? computeQuote(lead) : null), [lead])
@@ -35,6 +36,7 @@ export function SalesDealScreen() {
   const margin = marginPct(offer, quote.baseCost)
 
   if (closed) {
+    const myCommission = salesWallet.find((w) => w.leadId === lead.id)?.amount ?? 0
     return (
       <div>
         <RoleTopBar title="सौदा बंद झाला" back backTo="/sales" />
@@ -44,6 +46,15 @@ export function SalesDealScreen() {
           <p className="text-body text-ink-2 mt-2">
             ₹{formatINR(offer)} ला ({margin.toFixed(0)}% मार्जिन) — {lead.buildingName}
           </p>
+
+          <div className="mt-4 w-full rounded-2xl bg-ink text-white px-4 py-4">
+            <p className="text-caption text-white/70">तुमचे कमिशन</p>
+            <p className="text-title-l font-extrabold tnum mt-0.5" style={{ color: 'var(--color-accent)' }}>
+              +₹{formatINR(myCommission)}
+            </p>
+            <p className="text-[11px] text-white/60 mt-1">20% फ्लोरच्या वर जपलेल्या मार्जिनवर आधारित — जास्त मार्जिन जपले की जास्त कमिशन.</p>
+          </div>
+
           <p className="text-caption text-ink-2 mt-3 max-w-xs">
             करार तयार होत आहे. ग्राहकाला टोकन पेमेंट (₹10,000) साठी लिंक पाठवली जाईल. रायडरला ₹1,500 कमिशन जमा झाले.
           </p>

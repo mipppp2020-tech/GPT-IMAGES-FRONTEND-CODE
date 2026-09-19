@@ -26,7 +26,14 @@ export interface CashPanel {
 /** PRD §32.1, same shape as the worked example — computed from the exact
  * payment amounts every Customer screen already shows, not invented
  * figures. */
-export function computeCashPanel(leads: Lead[], wallet: WalletEntry[], techWallet: WalletEntry[], qcWallet: WalletEntry[], supplierWallet: WalletEntry[]): CashPanel {
+export function computeCashPanel(
+  leads: Lead[],
+  wallet: WalletEntry[],
+  salesWallet: WalletEntry[],
+  techWallet: WalletEntry[],
+  qcWallet: WalletEntry[],
+  supplierWallet: WalletEntry[],
+): CashPanel {
   const tokenLeads = leads.filter((l) => l.payments?.token)
   const materialLeads = leads.filter((l) => l.payments?.material90)
   const finalLeads = leads.filter((l) => l.payments?.final)
@@ -37,7 +44,10 @@ export function computeCashPanel(leads: Lead[], wallet: WalletEntry[], techWalle
   const grossInflow = tokensAmount + materialTotal + finalTotal
 
   const supplierOut = supplierWallet.filter((w) => w.state === 'cleared').reduce((s, w) => s + w.amount, 0)
-  const workerPayouts = [...wallet, ...techWallet, ...qcWallet]
+  // Sales Desk commissions are a real payroll cost too (PRD §21: "earns
+  // per manually-closed deal") — omitting them here would overstate net
+  // margin the moment the Sales role actually started paying its operator.
+  const workerPayouts = [...wallet, ...salesWallet, ...techWallet, ...qcWallet]
     .filter((w) => w.state === 'cleared')
     .reduce((s, w) => s + w.amount, 0)
 
@@ -109,13 +119,14 @@ export interface SeiPanel {
  * honestly, so they're left out rather than invented. */
 export function computeSEI(
   wallet: WalletEntry[],
+  salesWallet: WalletEntry[],
   techWallet: WalletEntry[],
   qcWallet: WalletEntry[],
   supplierWallet: WalletEntry[],
   adminDecisions: AdminDecision[],
   inspections: Inspection[],
 ): SeiPanel {
-  const automatedEvents = wallet.length + techWallet.length + qcWallet.length + supplierWallet.length
+  const automatedEvents = wallet.length + salesWallet.length + techWallet.length + qcWallet.length + supplierWallet.length
   const humanInterventions = adminDecisions.length
   const totalEvents = automatedEvents + humanInterventions
   const automatedPct = totalEvents > 0 ? Math.round((automatedEvents / totalEvents) * 1000) / 10 : 100

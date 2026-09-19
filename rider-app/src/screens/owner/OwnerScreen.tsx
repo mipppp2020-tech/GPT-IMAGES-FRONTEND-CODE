@@ -13,6 +13,7 @@ import { formatINR } from '../../lib/selectors'
 export function OwnerScreen() {
   const leads = useAiecStore((s) => s.leads)
   const wallet = useAiecStore((s) => s.wallet)
+  const salesWallet = useAiecStore((s) => s.salesWallet)
   const techWallet = useAiecStore((s) => s.techWallet)
   const qcWallet = useAiecStore((s) => s.qcWallet)
   const supplierWallet = useAiecStore((s) => s.supplierWallet)
@@ -21,9 +22,9 @@ export function OwnerScreen() {
   const adminDecisions = useAiecStore((s) => s.adminDecisions)
   const [showSeiWhy, setShowSeiWhy] = useState(false)
 
-  const cash = computeCashPanel(leads, wallet, techWallet, qcWallet, supplierWallet)
+  const cash = computeCashPanel(leads, wallet, salesWallet, techWallet, qcWallet, supplierWallet)
   const zones = computeGrowthPanel(leads)
-  const sei = computeSEI(wallet, techWallet, qcWallet, supplierWallet, adminDecisions, inspections)
+  const sei = computeSEI(wallet, salesWallet, techWallet, qcWallet, supplierWallet, adminDecisions, inspections)
   const alerts = computeStrategicAlerts(leads, techJobs, zones, sei)
 
   return (

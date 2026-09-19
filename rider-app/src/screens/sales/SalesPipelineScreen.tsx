@@ -10,7 +10,9 @@ import { formatINR } from '../../lib/selectors'
  * and how close is it to the 20% wall. */
 export function SalesPipelineScreen() {
   const leads = useAiecStore((s) => s.leads)
+  const salesWallet = useAiecStore((s) => s.salesWallet)
   const pipeline = leads.filter((l) => l.status === 'in_sales').sort((a, b) => b.qualityScore - a.qualityScore)
+  const myEarnings = salesWallet.reduce((sum, w) => sum + w.amount, 0)
 
   return (
     <div>
@@ -21,7 +23,15 @@ export function SalesPipelineScreen() {
         </p>
       </div>
 
-      <div className="px-4 mt-4 grid grid-cols-2 gap-2">
+      <div className="mx-4 mt-4 rounded-2xl bg-ink text-white px-4 py-3.5">
+        <p className="text-[11px] text-white/70">माझी एकूण कमाई — बंद केलेले सौदे</p>
+        <p className="text-title-l font-extrabold tnum mt-0.5" style={{ color: 'var(--color-accent)' }}>
+          ₹{formatINR(myEarnings)}
+        </p>
+        <p className="text-[11px] text-white/60 mt-0.5">{salesWallet.length} सौदे बंद केले</p>
+      </div>
+
+      <div className="px-4 mt-3 grid grid-cols-2 gap-2">
         <div className="rounded-xl bg-surface-2 px-3 py-2.5">
           <p className="text-[11px] text-ink-2">आजचे सौदे</p>
           <p className="text-title font-extrabold tnum">{pipeline.length}</p>

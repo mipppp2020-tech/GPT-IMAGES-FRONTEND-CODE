@@ -22,6 +22,7 @@ interface RiderStore {
   rider: RiderProfile
   leads: Lead[]
   wallet: WalletEntry[]
+  salesWallet: WalletEntry[]
   techWallet: WalletEntry[]
   techJobs: TechJob[]
   appeals: Appeal[]
@@ -78,6 +79,7 @@ export const useAiecStore = create<RiderStore>()(
       rider: DEMO_RIDER,
       leads: SEED_LEADS,
       wallet: seedWalletEntries(SEED_LEADS),
+      salesWallet: [],
       techWallet: [],
       techJobs: [],
       appeals: [],
@@ -176,6 +178,38 @@ export const useAiecStore = create<RiderStore>()(
           leadId,
           createdAt: Date.now(),
         })
+
+        // PRD §21 role table: "Sales Desk operator earns per manually-
+        // closed deal above 20% margin, scaled to margin protected" — a
+        // flat show-up fee plus a share of every rupee held above the
+        // hard 20% floor, so closing tighter to the floor still pays
+        // something but protecting more margin visibly pays more. This
+        // was previously entirely missing: the operator closed real
+        // deals and the confirmation screen only ever credited the
+        // rider, never them.
+        const marginProtected = Math.max(0, quote.currentOffer - quote.hardFloor)
+        const commission = 300 + Math.round(marginProtected * 0.15)
+        set((s) => ({
+          salesWallet: [
+            {
+              id: nextWalletId(),
+              amount: commission,
+              label: 'सौदा बंद केला',
+              cause: `${lead.buildingName} — मार्जिन जपले: ₹${marginProtected}`,
+              consequence: 'तुमच्या खात्यात जमा',
+              state: 'cleared',
+              leadId,
+              createdAt: Date.now(),
+            },
+            ...s.salesWallet,
+          ],
+          lastCoinEvent: {
+            amount: commission,
+            label: 'सौदा बंद केला — तुमचे कमिशन',
+            cause: lead.buildingName,
+            consequence: 'मार्जिन जपल्याबद्दल बोनससह',
+          },
+        }))
       },
 
       // PRD §4.2 Gate 1: token payment is what dispatches the Shaft
