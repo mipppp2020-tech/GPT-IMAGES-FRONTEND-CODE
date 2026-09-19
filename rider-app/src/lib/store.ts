@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Lead, WalletEntry, RiderProfile, Quote, TechJob, SopStepStatus, Inspection, QcInspectionType, QcVerdict, SupplyOrder } from './types'
+import type { Lead, WalletEntry, RiderProfile, Quote, TechJob, SopStepStatus, Inspection, QcInspectionType, QcVerdict, SupplyOrder, AdminDecision } from './types'
 import { DEMO_RIDER, SEED_LEADS, seedWalletEntries } from './mock'
 import { nextWalletId } from './ids'
 import { defaultShaftReadiness, emptyPayments } from './customerJourney'
@@ -29,6 +29,7 @@ interface RiderStore {
   inspections: Inspection[]
   supplierWallet: WalletEntry[]
   supplyOrders: SupplyOrder[]
+  adminDecisions: AdminDecision[]
   rideActive: boolean
   online: boolean
   lastCoinEvent: { amount: number; label: string; cause: string; consequence: string } | null
@@ -65,6 +66,9 @@ interface RiderStore {
   acceptOrder: (leadId: string) => void
   packKit: (orderId: string, kitId: string) => void
   sealAndDispatch: (orderId: string) => void
+
+  resolveBlockedLead: (leadId: string, isDuplicate: boolean) => void
+  recordAdminDecision: (alertId: string, label: string, reason: string) => void
 }
 
 export const useAiecStore = create<RiderStore>()(
@@ -80,6 +84,7 @@ export const useAiecStore = create<RiderStore>()(
       inspections: [],
       supplierWallet: [],
       supplyOrders: [],
+      adminDecisions: [],
       rideActive: false,
       online: typeof navigator !== 'undefined' ? navigator.onLine : true,
       lastCoinEvent: null,
@@ -530,6 +535,26 @@ export const useAiecStore = create<RiderStore>()(
           },
         }))
       },
+
+      // The two duplicate-flagged riders' commissions were paused the
+      // moment the lead was auto-blocked — this is the only action that
+      // ever unfreezes them, one way or the other.
+      resolveBlockedLead: (leadId, isDuplicate) =>
+        set((s) => ({
+          leads: s.leads.map((l) => (l.id !== leadId ? l : { ...l, status: isDuplicate ? 'lost' : 'in_sales' })),
+        })),
+
+      // A simple decisions list per the UX doc's MVP cut — not a full
+      // permanent audit log. This is what lets a QC-rework or low-quality
+      // alert leave the queue: those two kinds have no dedicated
+      // "resolved" flag of their own to flip.
+      recordAdminDecision: (alertId, label, reason) =>
+        set((s) => ({
+          adminDecisions: [
+            { id: `DEC-${Date.now()}`, alertId, label, reason, createdAt: Date.now() },
+            ...s.adminDecisions,
+          ],
+        })),
     }),
     { name: 'aiec-rider-store' },
   ),

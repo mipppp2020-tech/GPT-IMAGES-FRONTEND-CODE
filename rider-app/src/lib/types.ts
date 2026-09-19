@@ -120,6 +120,16 @@ export interface SupplyOrder {
   kits: SupplyKitState[]
 }
 
+/** A lightweight decision log — per the UX doc, "a simple decisions list
+ * is enough for MVP" rather than a full permanent audit log. */
+export interface AdminDecision {
+  id: string
+  alertId: string
+  label: string
+  reason: string
+  createdAt: number
+}
+
 export type WalletState = 'pending' | 'cleared'
 
 export interface WalletEntry {

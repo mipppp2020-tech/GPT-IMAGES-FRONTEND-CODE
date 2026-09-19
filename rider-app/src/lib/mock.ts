@@ -200,6 +200,27 @@ export const SEED_LEADS: Lead[] = [
     payments: { token: true, material90: true, final: false },
     shaftReadiness: defaultShaftReadiness().map((i) => ({ ...i, done: true })),
   },
+  {
+    id: 'MH-PUN-WKD-LEAD-3830-f',
+    buildingName: 'सह्याद्री हाईट्स',
+    address: 'वाकड, पुणे - 411057',
+    zone: 'Wakad',
+    lat: ZONES.Wakad.lat + 0.0005,
+    lng: ZONES.Wakad.lng - 0.0004,
+    floors: 6,
+    shaftReady: true,
+    passengers: 8,
+    ownerName: 'श्री. राहुल कदम',
+    ownerPhone: '+91 90215 55667',
+    photos: { shaft: null, building: null, contact: null },
+    note: 'दोन वेगळ्या रायडर्सनी 6 मिनिटांच्या अंतराने जवळजवळ त्याच पत्त्यावरून कॅप्चर केली.',
+    qualityScore: 81,
+    payout: 40,
+    status: 'blocked',
+    createdAt: now - 2 * day,
+    synced: true,
+    newGroundBonus: false,
+  },
 ]
 
 export function seedWalletEntries(leads: Lead[]): WalletEntry[] {

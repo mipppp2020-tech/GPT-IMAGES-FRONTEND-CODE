@@ -26,7 +26,7 @@ export const ROLES: RoleMeta[] = [
   { id: 'technician', label: 'तंत्रज्ञ', subtitle: 'इंस्टॉल करा, कमवा', path: '/technician', theme: 'technician', emoji: '🔧', live: true },
   { id: 'qc', label: 'QC इन्स्पेक्टर', subtitle: 'तपासा, प्रमाणित करा', path: '/qc', theme: 'qc', emoji: '🔍', live: true },
   { id: 'supplier', label: 'सप्लायर', subtitle: 'पॅक करा, पाठवा', path: '/supplier', theme: 'supplier', emoji: '📦', live: true },
-  { id: 'admin', label: 'अॅडमिन', subtitle: 'शहर नियंत्रण', path: '/admin', theme: 'admin', emoji: '🖥️', live: false },
+  { id: 'admin', label: 'अॅडमिन', subtitle: 'शहर नियंत्रण', path: '/admin', theme: 'admin', emoji: '🖥️', live: true },
   { id: 'owner', label: 'ओनर', subtitle: 'व्यवसाय विहंगावलोकन', path: '/owner', theme: 'owner', emoji: '📊', live: false },
   { id: 'join', label: 'AIEC मध्ये सामील व्हा', subtitle: 'तंत्रज्ञ म्हणून कमवायला सुरुवात करा', path: '/join', theme: null, emoji: '🚀', live: false },
 ]
