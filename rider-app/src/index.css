@@ -1,0 +1,322 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --font-sans: "Anek Devanagari", "Anek Latin", "Noto Sans Devanagari", system-ui, sans-serif;
+
+  /* Sunlight theme — Rider */
+  --color-surface: #ffffff;
+  --color-surface-2: #f4f5f7;
+  --color-ink: #14181c;
+  --color-ink-2: #565e68;
+  --color-accent: #e8451f;
+  --color-accent-ink: #ffffff;
+  --color-good: #12805a;
+  --color-good-surface: #e7f5ef;
+  --color-warn: #a88300;
+  --color-warn-surface: #fbf3da;
+  --color-bad: #c42b1c;
+  --color-bad-surface: #fbeae8;
+
+  /* Lifecycle ramp (light) */
+  --color-life-new: #8a9099;
+  --color-life-sales: #1f6feb;
+  --color-life-won: #7847d4;
+  --color-life-transit: #d97b00;
+  --color-life-installing: #a88300;
+  --color-life-complete: #12805a;
+  --color-life-blocked: #c42b1c;
+  --color-life-lost: #1c1f23;
+
+  /* Field type scale (Sunlight) */
+  --text-display: 2.5rem;
+  --text-display--line-height: 2.75rem;
+  --text-title-l: 2rem;
+  --text-title-l--line-height: 2.5rem;
+  --text-title: 1.625rem;
+  --text-title--line-height: 2.125rem;
+  --text-body-l: 1.375rem;
+  --text-body-l--line-height: 2rem;
+  --text-body: 1.25rem;
+  --text-body--line-height: 1.875rem;
+  --text-caption: 1.0625rem;
+  --text-caption--line-height: 1.5rem;
+}
+
+/* ---------------------------------------------------------------------
+ * Role themes. One grammar (the token names below), five looks — the
+ * design system's own rule (02_AIEC_Design_System.md §0.5): a shared
+ * component reads var(--color-surface) etc. regardless of which role's
+ * screen it's mounted in, so StatusStack/EntityCard/MoneyMeter/
+ * EntityTimeline/LifecycleMark need no role-specific code at all. Each
+ * block below only overrides what that theme actually changes.
+ * Sunlight (Rider, Candidate) is the default set in @theme above and
+ * needs no override block.
+ * ------------------------------------------------------------------- */
+
+/* Command, light — Sales Desk, Supplier */
+[data-theme='sales'],
+[data-theme='supplier'] {
+  --color-surface: #f7f9fb;
+  --color-surface-2: #eef1f4;
+  --color-ink: #0e1416;
+  --color-ink-2: #55606a;
+  --color-accent: #0e1416;
+  --color-accent-ink: #ffffff;
+  --color-focus: #4c8df6;
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+/* Premium — Customer */
+[data-theme='customer'] {
+  --color-surface: #fcfaf6;
+  --color-surface-2: #f4f0e8;
+  --color-ink: #1a1712;
+  --color-ink-2: #6b6355;
+  --color-accent: #8c6a21;
+  --color-accent-ink: #ffffff;
+  --color-gold: #c9a227; /* progress ring only — the one element that carries the relationship */
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+/* Slate — Technician, QC (field themes, keep the large Sunlight-matched type scale) */
+[data-theme='technician'],
+[data-theme='qc'] {
+  --color-surface: #0e1416;
+  --color-surface-2: #182024;
+  --color-surface-3: #212c31;
+  --color-ink: #e9eff1;
+  --color-ink-2: #9aa8ae;
+  --color-accent: #22c7c7;
+  --color-accent-ink: #0e1416;
+  --color-safety: #ff4d3d; /* SOS only — no other element may use this value */
+
+  /* Lifecycle ramp, dark-surface calibration — same semantics as light,
+   * tuned so each still meets contrast against a near-black surface. */
+  --color-life-new: #767e88;
+  --color-life-sales: #5296f5;
+  --color-life-won: #a481ef;
+  --color-life-transit: #f0a32b;
+  --color-life-installing: #d9b93c;
+  --color-life-complete: #2fa36b;
+  --color-life-blocked: #f2564a;
+  --color-life-lost: #0b0d0f;
+}
+
+/* Command, dark — Admin */
+[data-theme='admin'] {
+  --color-surface: #0a0e12;
+  --color-surface-2: #121820;
+  --color-surface-3: #1a222c;
+  --color-ink: #dce4ec;
+  --color-ink-2: #8494a4;
+  --color-accent: #f2f5f8;
+  --color-accent-ink: #0a0e12;
+  --color-focus: #4c8df6;
+
+  --color-life-new: #767e88;
+  --color-life-sales: #5296f5;
+  --color-life-won: #a481ef;
+  --color-life-transit: #f0a32b;
+  --color-life-installing: #d9b93c;
+  --color-life-complete: #2fa36b;
+  --color-life-blocked: #f2564a;
+  --color-life-lost: #0b0d0f;
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+/* Executive — Owner: almost no colour, two semantic values for direction of travel */
+[data-theme='owner'] {
+  --color-surface: #08090b;
+  --color-surface-2: #121418;
+  --color-ink: #f2f5f8;
+  --color-ink-2: #7e8894;
+  --color-accent: #f2f5f8;
+  --color-accent-ink: #08090b;
+  --color-good: #2fa36b;
+  --color-bad: #f2564a;
+
+  --text-title-l: 1.75rem;
+  --text-title-l--line-height: 2.125rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.625rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+}
+
+/* ---------------------------------------------------------------------
+ * App-wide dark mode — one switch, orthogonal to the role theme above.
+ * Overrides only the four surface/ink tokens every shared component
+ * already reads through; each role's own --color-accent (and the
+ * lifecycle ramp) is left alone, since that's what actually carries role
+ * identity, not the light/dark polarity of its background.
+ * The plain selector covers screens with no [data-theme] override
+ * (Rider, Candidate — Sunlight's :root defaults); the descendant
+ * selector re-declares on the themed element itself, since a role block
+ * above already sets these tokens locally there and a locally-declared
+ * custom property always wins over one merely inherited from <html>.
+ * ------------------------------------------------------------------- */
+.aiec-dark,
+.aiec-dark [data-theme] {
+  --color-surface: #14181c;
+  --color-surface-2: #0c1013;
+  --color-surface-3: #1c2226;
+  --color-ink: #eef2f4;
+  --color-ink-2: #98a4ac;
+}
+
+/* The four roles above are dark by design (Slate, Command-dark, Executive)
+ * and had no light variant at all — so switching the toggle to day/light
+ * visibly did nothing on Technician/QC/Admin/Owner. This is the other
+ * half of the switch: forces those same four surface/ink tokens light
+ * when the app is in light mode, so the toggle is a real two-way switch
+ * everywhere, not just on the five roles that were already light-native. */
+.aiec-light [data-theme='technician'],
+.aiec-light [data-theme='qc'],
+.aiec-light [data-theme='admin'],
+.aiec-light [data-theme='owner'] {
+  --color-surface: #ffffff;
+  --color-surface-2: #f2f4f6;
+  --color-surface-3: #e7eaee;
+  --color-ink: #14181c;
+  --color-ink-2: #565e68;
+}
+
+/* Admin/Owner's --color-accent is a near-white value meant to read against
+ * their native near-black surface (an inverted "brightest thing on the
+ * page" accent) — on the light surface above it would be a near-invisible
+ * white-on-white button. Swap it to the same inversion the other way: dark
+ * fill, light text, which is exactly what "almost no colour, direction of
+ * travel only" means on a light background too. */
+.aiec-light [data-theme='admin'],
+.aiec-light [data-theme='owner'] {
+  --color-accent: #14181c;
+  --color-accent-ink: #ffffff;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+  overscroll-behavior-y: contain;
+  /* Belt-and-suspenders for Law 9: whatever combination of extreme font
+   * scale and long content someday slips past a component's own layout,
+   * this is the last line of defense against a page-wide horizontal
+   * scrollbar on a one-handed field device. */
+  overflow-x: hidden;
+}
+
+/* Money strings always use tabular figures so a credit animation never shifts the row.
+ * overflow-wrap is the escape hatch for Law 9 (survives 200% text scale): a
+ * ₹-amount is one unbreakable digit run with nowhere to linebreak, and at the
+ * OS's most extreme font-scale setting a 6-7 digit amount can outgrow a
+ * 320-400px viewport even with correct layout everywhere else. Wrapping the
+ * digit run onto a second line beats forcing a page-wide horizontal
+ * scrollbar — the failure Law 9 actually cares about. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  overflow-wrap: anywhere;
+}
+
+.tap-target {
+  min-height: 72px;
+  min-width: 72px;
+}
+
+@keyframes coin-pop {
+  0% {
+    transform: scale(0.6) translateY(6px);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.08) translateY(-2px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-coin {
+  animation: coin-pop 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes aiecPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* Leaflet ships its own control chrome; restyle just enough to match the
+ * Sunlight theme (rounded, ink-on-white, no default blue) rather than
+ * fighting it with !important overrides everywhere. */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: #eaf1e9;
+}
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18) !important;
+}
+.leaflet-control-zoom a {
+  color: var(--color-ink) !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 14px !important;
+  padding: 0 !important;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+.leaflet-popup-tip {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
