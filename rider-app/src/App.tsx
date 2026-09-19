@@ -25,6 +25,8 @@ import { SupplierOrderBoardScreen } from './screens/supplier/SupplierOrderBoardS
 import { KitPackingScreen } from './screens/supplier/KitPackingScreen'
 import { AdminLayout } from './layout/AdminLayout'
 import { AdminScreen } from './screens/admin/AdminScreen'
+import { OwnerLayout } from './layout/OwnerLayout'
+import { OwnerScreen } from './screens/owner/OwnerScreen'
 
 function App() {
   return (
@@ -71,8 +73,11 @@ function App() {
           <Route path="/admin" element={<AdminScreen />} />
         </Route>
 
+        <Route element={<OwnerLayout />}>
+          <Route path="/owner" element={<OwnerScreen />} />
+        </Route>
+
         {/* Stubs — each replaced by its own phase's real screens, one at a time */}
-        <Route path="/owner" element={<RoleStubScreen role="owner" />} />
         <Route path="/join" element={<RoleStubScreen role="join" />} />
       </Routes>
     </BrowserRouter>
