@@ -4,6 +4,8 @@ import { ProgressRing } from '../../components/ProgressRing'
 import { useAiecStore } from '../../lib/store'
 import { journeyStage, selectPrimaryCustomerLead } from '../../lib/customerJourney'
 import { formatINR } from '../../lib/selectors'
+import { downloadNoc } from '../../lib/nocDocument'
+import type { Lead } from '../../lib/types'
 
 export function CustomerDashboardScreen() {
   const { id } = useParams()
@@ -90,7 +92,7 @@ export function CustomerDashboardScreen() {
         )}
 
         {stage.key === 'complete' && (
-          <NocCard buildingName={lead.buildingName} finalAmt={finalAmt} />
+          <NocCard lead={lead} finalAmt={finalAmt} />
         )}
       </div>
 
@@ -142,16 +144,19 @@ function PaymentRow({ label, amount, done }: { label: string; amount: number; do
   )
 }
 
-function NocCard({ buildingName, finalAmt }: { buildingName: string; finalAmt: number }) {
+function NocCard({ lead, finalAmt }: { lead: Lead; finalAmt: number }) {
   return (
     <div className="rounded-2xl border-2 p-5 text-center animate-coin" style={{ borderColor: 'var(--color-gold)' }}>
       <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl" style={{ background: 'var(--color-gold)', opacity: 0.15 }}>
         🎖️
       </div>
       <p className="text-title-l font-extrabold">NOC व वॉरंटी जारी</p>
-      <p className="text-caption text-ink-2 mt-1">{buildingName} — अंतिम पेमेंट ₹{formatINR(finalAmt)} स्वीकारले गेले</p>
+      <p className="text-caption text-ink-2 mt-1">{lead.buildingName} — अंतिम पेमेंट ₹{formatINR(finalAmt)} स्वीकारले गेले</p>
       <p className="text-caption text-ink-2 mt-3">AMC वर्ष 1 आजपासून सक्रिय झाले आहे.</p>
-      <button className="mt-4 w-full tap-target rounded-2xl bg-accent text-accent-ink font-extrabold text-body-l">
+      <button
+        onClick={() => downloadNoc(lead, finalAmt)}
+        className="mt-4 w-full tap-target rounded-2xl bg-accent text-accent-ink font-extrabold text-body-l"
+      >
         NOC डाउनलोड करा
       </button>
     </div>

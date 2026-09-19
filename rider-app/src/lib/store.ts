@@ -46,7 +46,7 @@ interface RiderStore {
   checkPendingVerifications: () => void
   closeDeal: (leadId: string, quote: Quote) => void
   payToken: (leadId: string) => void
-  toggleShaftItem: (leadId: string, index: number) => void
+  captureShaftPhoto: (leadId: string, index: number, dataUrl: string) => void
   payMaterial90: (leadId: string) => void
 
   acceptJob: (leadId: string) => void
@@ -227,14 +227,20 @@ export const useAiecStore = create<RiderStore>()(
           ),
         })),
 
-      toggleShaftItem: (leadId, index) =>
+      // Was a plain toggle with a camera emoji sitting on it — the button
+      // that links here says "upload shaft-readiness photos," and the
+      // ShaftReadinessItem type already had an unused `photo` field, but
+      // nothing ever actually asked for or stored one. Real evidence now,
+      // matching the camera-first pattern used everywhere else (Rider,
+      // Technician, QC) instead of a silent tap standing in for it.
+      captureShaftPhoto: (leadId, index, dataUrl) =>
         set((s) => ({
           leads: s.leads.map((l) =>
             l.id === leadId && l.shaftReadiness
               ? {
                   ...l,
                   shaftReadiness: l.shaftReadiness.map((item, i) =>
-                    i === index ? { ...item, done: !item.done } : item,
+                    i === index ? { ...item, done: true, photo: dataUrl } : item,
                   ),
                 }
               : l,
