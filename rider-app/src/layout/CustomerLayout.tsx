@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { DemoRibbon } from '../components/DemoRibbon'
+import { CoinFeedback } from '../components/CoinFeedback'
 import { ConversionBar } from '../components/ConversionBar'
 
 /** Premium theme. UX doc §2.3: "never more than one primary action on this
@@ -12,6 +13,7 @@ export function CustomerLayout() {
     <div data-theme="customer" className="min-h-dvh bg-surface-2 text-ink flex justify-center">
       <div className="w-full max-w-md bg-surface min-h-dvh relative shadow-sm">
         <DemoRibbon />
+        <CoinFeedback />
         <div className="pb-14">
           <Outlet />
         </div>

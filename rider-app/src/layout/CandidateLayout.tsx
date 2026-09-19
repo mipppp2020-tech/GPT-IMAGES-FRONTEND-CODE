@@ -3,11 +3,12 @@ import { DemoRibbon } from '../components/DemoRibbon'
 import { CoinFeedback } from '../components/CoinFeedback'
 import { ConversionBar } from '../components/ConversionBar'
 
-/** Executive — "dark, very large type, charts over tables, almost no
- * chrome" (UX doc §2.9). */
-export function OwnerLayout() {
+/** Sunlight, aspirational — same bright default palette as Rider (no
+ * data-theme override), since the candidate is being shown the same
+ * world they're about to join. */
+export function CandidateLayout() {
   return (
-    <div data-theme="owner" className="min-h-dvh bg-surface-2 text-ink flex justify-center">
+    <div className="min-h-dvh bg-surface-2 flex justify-center">
       <div className="w-full max-w-md bg-surface min-h-dvh relative shadow-sm">
         <DemoRibbon />
         <CoinFeedback />

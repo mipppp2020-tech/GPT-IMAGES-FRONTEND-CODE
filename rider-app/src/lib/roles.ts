@@ -28,7 +28,7 @@ export const ROLES: RoleMeta[] = [
   { id: 'supplier', label: 'सप्लायर', subtitle: 'पॅक करा, पाठवा', path: '/supplier', theme: 'supplier', emoji: '📦', live: true },
   { id: 'admin', label: 'अॅडमिन', subtitle: 'शहर नियंत्रण', path: '/admin', theme: 'admin', emoji: '🖥️', live: true },
   { id: 'owner', label: 'ओनर', subtitle: 'व्यवसाय विहंगावलोकन', path: '/owner', theme: 'owner', emoji: '📊', live: true },
-  { id: 'join', label: 'AIEC मध्ये सामील व्हा', subtitle: 'तंत्रज्ञ म्हणून कमवायला सुरुवात करा', path: '/join', theme: null, emoji: '🚀', live: false },
+  { id: 'join', label: 'AIEC मध्ये सामील व्हा', subtitle: 'तंत्रज्ञ म्हणून कमवायला सुरुवात करा', path: '/join', theme: null, emoji: '🚀', live: true },
 ]
 
 export function roleById(id: RoleId): RoleMeta {

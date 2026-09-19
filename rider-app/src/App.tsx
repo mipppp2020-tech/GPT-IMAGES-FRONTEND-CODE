@@ -7,7 +7,6 @@ import { LeadDetailScreen } from './screens/LeadDetailScreen'
 import { EarningsScreen } from './screens/EarningsScreen'
 import { MoreScreen } from './screens/MoreScreen'
 import { RoleSwitcherScreen } from './screens/RoleSwitcherScreen'
-import { RoleStubScreen } from './screens/RoleStubScreen'
 import { SalesLayout } from './layout/SalesLayout'
 import { SalesPipelineScreen } from './screens/sales/SalesPipelineScreen'
 import { SalesDealScreen } from './screens/sales/SalesDealScreen'
@@ -27,6 +26,8 @@ import { AdminLayout } from './layout/AdminLayout'
 import { AdminScreen } from './screens/admin/AdminScreen'
 import { OwnerLayout } from './layout/OwnerLayout'
 import { OwnerScreen } from './screens/owner/OwnerScreen'
+import { CandidateLayout } from './layout/CandidateLayout'
+import { CandidateScreen } from './screens/candidate/CandidateScreen'
 
 function App() {
   return (
@@ -77,8 +78,9 @@ function App() {
           <Route path="/owner" element={<OwnerScreen />} />
         </Route>
 
-        {/* Stubs — each replaced by its own phase's real screens, one at a time */}
-        <Route path="/join" element={<RoleStubScreen role="join" />} />
+        <Route element={<CandidateLayout />}>
+          <Route path="/join" element={<CandidateScreen />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
