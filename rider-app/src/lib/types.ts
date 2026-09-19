@@ -106,6 +106,20 @@ export interface Inspection {
   signedAt: number | null
 }
 
+export interface SupplyKitState {
+  id: string
+  packed: boolean
+}
+
+export type SupplyOrderStage = 'offered' | 'packing' | 'dispatched'
+
+export interface SupplyOrder {
+  id: string
+  leadId: string
+  stage: SupplyOrderStage
+  kits: SupplyKitState[]
+}
+
 export type WalletState = 'pending' | 'cleared'
 
 export interface WalletEntry {

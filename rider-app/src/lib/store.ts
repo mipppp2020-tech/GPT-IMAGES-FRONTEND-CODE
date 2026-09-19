@@ -1,11 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Lead, WalletEntry, RiderProfile, Quote, TechJob, SopStepStatus, Inspection, QcInspectionType, QcVerdict } from './types'
+import type { Lead, WalletEntry, RiderProfile, Quote, TechJob, SopStepStatus, Inspection, QcInspectionType, QcVerdict, SupplyOrder } from './types'
 import { DEMO_RIDER, SEED_LEADS, seedWalletEntries } from './mock'
 import { nextWalletId } from './ids'
 import { defaultShaftReadiness, emptyPayments } from './customerJourney'
 import { SOP_TEMPLATE, JOB_ON_TIME_BONUS } from './sop'
 import { buildChecklist, QC_FEES } from './qcChecklists'
+import { KIT_TEMPLATE } from './kits'
 
 export interface Appeal {
   id: string
@@ -26,6 +27,8 @@ interface RiderStore {
   appeals: Appeal[]
   qcWallet: WalletEntry[]
   inspections: Inspection[]
+  supplierWallet: WalletEntry[]
+  supplyOrders: SupplyOrder[]
   rideActive: boolean
   online: boolean
   lastCoinEvent: { amount: number; label: string; cause: string; consequence: string } | null
@@ -58,6 +61,10 @@ interface RiderStore {
   setQcNote: (inspectionId: string, itemId: string, note: string) => void
   captureQcPhoto: (inspectionId: string, itemId: string, dataUrl: string) => void
   signOffInspection: (inspectionId: string) => void
+
+  acceptOrder: (leadId: string) => void
+  packKit: (orderId: string, kitId: string) => void
+  sealAndDispatch: (orderId: string) => void
 }
 
 export const useAiecStore = create<RiderStore>()(
@@ -71,6 +78,8 @@ export const useAiecStore = create<RiderStore>()(
       appeals: [],
       qcWallet: [],
       inspections: [],
+      supplierWallet: [],
+      supplyOrders: [],
       rideActive: false,
       online: typeof navigator !== 'undefined' ? navigator.onLine : true,
       lastCoinEvent: null,
@@ -452,6 +461,72 @@ export const useAiecStore = create<RiderStore>()(
             label: inspection.type === 'shaft' ? 'शाफ्ट तपासणी' : 'अंतिम तपासणी',
             cause: lead?.buildingName ?? inspection.leadId,
             consequence: result === 'cleared' ? 'क्लिअर' : 'रिवर्क यादी पाठवली',
+          },
+        }))
+      },
+
+      // PRD §15.2: allocation happens on QC clearance — here, a lead
+      // reaching in_transit (set by QC's shaft clearance) is exactly what
+      // makes it an order. §15.5: "paid on delivery-and-collection, not
+      // 60/90-day credit" — the whole pitch to suppliers.
+      acceptOrder: (leadId) =>
+        set((s) => {
+          if (s.supplyOrders.some((o) => o.leadId === leadId)) return s
+          return {
+            supplyOrders: [
+              ...s.supplyOrders,
+              {
+                id: `ORD-${Date.now()}`,
+                leadId,
+                stage: 'packing',
+                kits: KIT_TEMPLATE.map((k) => ({ id: k.id, packed: false })),
+              },
+            ],
+          }
+        }),
+
+      packKit: (orderId, kitId) =>
+        set((s) => ({
+          supplyOrders: s.supplyOrders.map((o) =>
+            o.id !== orderId ? o : { ...o, kits: o.kits.map((k) => (k.id === kitId ? { ...k, packed: true } : k)) },
+          ),
+        })),
+
+      // §15.4: every kit scanned in, container sealed, IoT array armed.
+      // §17/18's live tracking and triple-key unlock are out of MVP scope
+      // (declared cut) — here, sealing directly delivers the material,
+      // which is what makes the lead `installing` and therefore a job a
+      // Technician can accept.
+      sealAndDispatch: (orderId) => {
+        const order = get().supplyOrders.find((o) => o.id === orderId)
+        if (!order) return
+        set((s) => ({
+          supplyOrders: s.supplyOrders.map((o) => (o.id === orderId ? { ...o, stage: 'dispatched' } : o)),
+        }))
+        set((s) => ({
+          leads: s.leads.map((l) => (l.id === order.leadId ? { ...l, status: 'installing' } : l)),
+        }))
+        const lead = get().leads.find((l) => l.id === order.leadId)
+        const amount = lead?.quote?.baseCost ?? 500000
+        set((s) => ({
+          supplierWallet: [
+            {
+              id: nextWalletId(),
+              amount,
+              label: 'मटेरियल पेमेंट — डिलिव्हरीवर',
+              cause: lead?.buildingName ?? order.leadId,
+              consequence: 'त्याच दिवशी सेटल',
+              state: 'cleared',
+              leadId: order.leadId,
+              createdAt: Date.now(),
+            },
+            ...s.supplierWallet,
+          ],
+          lastCoinEvent: {
+            amount,
+            label: 'मटेरियल पेमेंट — डिलिव्हरीवर',
+            cause: lead?.buildingName ?? order.leadId,
+            consequence: 'त्याच दिवशी सेटल',
           },
         }))
       },
