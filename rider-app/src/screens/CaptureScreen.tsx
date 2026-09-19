@@ -170,6 +170,11 @@ export function CaptureScreen() {
       createdAt: Date.now(),
       synced: online,
       newGroundBonus: Math.random() > 0.6,
+      // Stored as an absolute time, not just a live setTimeout, so a full
+      // reload (backgrounding the app, losing signal, just reopening it —
+      // all normal on a field worker's phone) doesn't strand this lead's
+      // pending wallet credit with nothing left to ever clear it.
+      verifyAt: payout === 40 ? Date.now() + 4000 : undefined,
     }
 
     const doCommit = () => {
@@ -180,7 +185,14 @@ export function CaptureScreen() {
         label: payout === 40 ? 'वैध लीड कॅप्चर' : 'कमी गुणवत्ता लीड',
         cause: lead.buildingName,
         consequence: online ? 'तपासणीनंतर 24 तासांत क्लिअर होते' : 'नेटवर्क आल्यावर सिंक व सत्यापित होईल',
-        state: online ? 'cleared' : 'pending',
+        // PRD Law #4: "credits land in Pending, move to Cleared on QC/AI
+        // verification" — every capture starts Pending regardless of
+        // connectivity; it was previously hardcoded 'cleared' the instant
+        // an online rider submitted, directly contradicting both this PRD
+        // law and the "clears within 24hrs after inspection" consequence
+        // text on the very same entry, and the lead-detail screen's own
+        // "AI is still verifying" copy for a lead still in 'new' status.
+        state: 'pending',
         leadId: id,
         createdAt: Date.now(),
       })

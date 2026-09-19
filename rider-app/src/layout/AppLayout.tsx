@@ -8,6 +8,7 @@ import { useAiecStore } from '../lib/store'
 
 export function AppLayout() {
   const setOnline = useAiecStore((s) => s.setOnline)
+  const checkPendingVerifications = useAiecStore((s) => s.checkPendingVerifications)
 
   useEffect(() => {
     const on = () => setOnline(true)
@@ -19,11 +20,17 @@ export function AppLayout() {
     // a live 'online' transition, and queued items would sit as "syncing"
     // forever. Network recovery must sync regardless of *when* it's noticed.
     if (navigator.onLine) setOnline(true)
+    // Independent of connectivity: a capture's simulated verification is
+    // purely time-based, so re-check it on every reopen too, not only on
+    // an online transition (a rider backgrounding the app while online the
+    // whole time still needs this, since the live setTimeout that would
+    // normally fire this doesn't survive the reload).
+    checkPendingVerifications()
     return () => {
       window.removeEventListener('online', on)
       window.removeEventListener('offline', off)
     }
-  }, [setOnline])
+  }, [setOnline, checkPendingVerifications])
 
   return (
     <div className="min-h-dvh bg-surface-2 flex justify-center">

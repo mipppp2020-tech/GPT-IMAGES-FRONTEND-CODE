@@ -42,6 +42,7 @@ interface RiderStore {
   syncQueued: () => void
   clearCoinEvent: () => void
   advanceLeadStatus: (leadId: string) => void
+  checkPendingVerifications: () => void
   closeDeal: (leadId: string, quote: Quote) => void
   payToken: (leadId: string) => void
   toggleShaftItem: (leadId: string, index: number) => void
@@ -111,18 +112,43 @@ export const useAiecStore = create<RiderStore>()(
           },
         })),
 
-      syncQueued: () =>
+      // Reconnecting only delivers a queued offline capture to the server —
+      // it does not itself verify anything. Actual verification completion
+      // is handled by checkPendingVerifications below, which is safe to
+      // call here too (a lead captured offline may already be past its
+      // verifyAt time by the time signal returns).
+      syncQueued: () => {
         set((s) => ({
           leads: s.leads.map((l) => (l.synced ? l : { ...l, synced: true })),
-          wallet: s.wallet.map((w) => (w.state === 'pending' ? { ...w, state: 'cleared' } : w)),
-        })),
+        }))
+        get().checkPendingVerifications()
+      },
 
       clearCoinEvent: () => set({ lastCoinEvent: null }),
 
+      // The simulated AI-verification-passed moment (PRD §9.1: score >=
+      // 70 routes to an automated sequence). This is also what actually
+      // moves that capture's wallet credit from Pending to Cleared — the
+      // two were previously decoupled, so the credit showed as cleared
+      // well before this ever fired.
       advanceLeadStatus: (leadId) =>
         set((s) => ({
           leads: s.leads.map((l) => (l.id === leadId ? { ...l, status: 'in_sales' } : l)),
+          wallet: s.wallet.map((w) => (w.leadId === leadId && w.state === 'pending' ? { ...w, state: 'cleared' } : w)),
         })),
+
+      // A live setTimeout is what CaptureScreen schedules for the common
+      // case (rider stays on the tab), but a JS timer dies with the page —
+      // background the app, lose signal, or just reload, and it never
+      // fires, leaving real money stuck showing "pending" forever with no
+      // recovery. This is the reload-safe fallback: any lead whose
+      // verifyAt has already passed gets caught up here instead, so
+      // reopening the app (not just staying on it) also resolves pending
+      // credits. Called on every app mount.
+      checkPendingVerifications: () => {
+        const due = get().leads.filter((l) => l.status === 'new' && l.verifyAt !== undefined && l.verifyAt <= Date.now())
+        for (const lead of due) get().advanceLeadStatus(lead.id)
+      },
 
       // PRD §9.5: closing a deal is an 8-action cascade — a `LIFT`/`CUST`
       // record is created, the map pin turns purple, shaft-readiness SOP

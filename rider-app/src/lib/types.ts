@@ -45,6 +45,7 @@ export interface Lead {
   createdAt: number
   synced: boolean
   newGroundBonus: boolean
+  verifyAt?: number // when the simulated AI verification completes (status 'new' -> 'in_sales', wallet pending -> cleared)
   aiTip?: string
   quote?: Quote
   payments?: CustomerPayments

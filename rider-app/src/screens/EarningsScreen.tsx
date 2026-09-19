@@ -66,7 +66,7 @@ export function EarningsScreen() {
                 <p
                   className={`text-[11px] font-semibold ${w.state === 'pending' ? 'text-warn' : 'text-ink-2'}`}
                 >
-                  {w.state === 'pending' ? 'सिंक होत आहे' : 'क्लिअर'}
+                  {w.state === 'pending' ? 'पडताळणीत' : 'क्लिअर'}
                 </p>
               </div>
             </Link>
