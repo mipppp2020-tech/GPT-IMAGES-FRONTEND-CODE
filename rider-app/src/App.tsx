@@ -31,7 +31,7 @@ import { CandidateScreen } from './screens/candidate/CandidateScreen'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/demo" element={<RoleSwitcherScreen />} />
 

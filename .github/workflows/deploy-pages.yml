@@ -1,0 +1,64 @@
+name: Deploy demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: rider-app/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: rider-app
+
+      - name: Build
+        run: pnpm build
+        working-directory: rider-app
+        env:
+          GH_PAGES: "1"
+
+      # GitHub Pages has no server-side rewrites — a direct hit or refresh
+      # on a client-routed path (e.g. /sales, /customer/:id) 404s without
+      # this. Serving index.html for the 404 case lets react-router's
+      # BrowserRouter take over and resolve the route client-side.
+      - name: Add SPA fallback (404 -> index.html)
+        run: cp rider-app/dist/index.html rider-app/dist/404.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: rider-app/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
