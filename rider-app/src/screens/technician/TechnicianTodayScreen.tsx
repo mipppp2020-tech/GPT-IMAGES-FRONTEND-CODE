@@ -86,7 +86,7 @@ export function TechnicianTodayScreen() {
   }
 
   if (job.stage === 'done') {
-    const earned = jobTotalValue() + JOB_ON_TIME_BONUS
+    const earned = jobMaxPossible()
     return (
       <div>
         <RoleTopBar title="जॉब पूर्ण" />

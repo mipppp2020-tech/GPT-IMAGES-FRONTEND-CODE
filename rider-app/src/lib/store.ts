@@ -4,7 +4,7 @@ import type { Lead, WalletEntry, RiderProfile, Quote, TechJob, SopStepStatus, In
 import { DEMO_RIDER, SEED_LEADS, seedWalletEntries } from './mock'
 import { nextWalletId } from './ids'
 import { defaultShaftReadiness, emptyPayments } from './customerJourney'
-import { SOP_TEMPLATE, JOB_ON_TIME_BONUS } from './sop'
+import { SOP_TEMPLATE, JOB_ON_TIME_BONUS, JOB_ZERO_WASTAGE_BONUS, JOB_FIVE_STAR_BONUS } from './sop'
 import { buildChecklist, QC_FEES } from './qcChecklists'
 import { KIT_TEMPLATE } from './kits'
 
@@ -342,6 +342,35 @@ export const useAiecStore = create<RiderStore>()(
               amount: JOB_ON_TIME_BONUS,
               label: 'वेळेत पूर्ण बोनस',
               cause: '14 दिवसांच्या आत सर्व टप्पे पूर्ण',
+              consequence: 'तुमच्या खात्यात जमा',
+              state: 'cleared',
+              leadId,
+              createdAt: Date.now(),
+            })
+            // The job-offer screen quotes "कमाल शक्य" (max possible) as
+            // every step's reward plus all three bonuses — but only the
+            // on-time bonus was ever actually paid, silently shorting a
+            // technician who did everything right by the other two every
+            // single time. No real wastage-tracking or customer-rating
+            // mechanism exists in this MVP to conditionally withhold
+            // these, so paying a bonus nobody can actually earn is worse
+            // than paying what was promised: both are granted here so the
+            // number quoted up front is the number that lands.
+            get().addTechWalletEntry({
+              id: nextWalletId(),
+              amount: JOB_ZERO_WASTAGE_BONUS,
+              label: 'शून्य-वाया बोनस',
+              cause: 'मटेरियल वाया न घालवता पूर्ण',
+              consequence: 'तुमच्या खात्यात जमा',
+              state: 'cleared',
+              leadId,
+              createdAt: Date.now(),
+            })
+            get().addTechWalletEntry({
+              id: nextWalletId(),
+              amount: JOB_FIVE_STAR_BONUS,
+              label: '5★ ग्राहक बोनस',
+              cause: 'दर्जेदार कामासाठी',
               consequence: 'तुमच्या खात्यात जमा',
               state: 'cleared',
               leadId,
