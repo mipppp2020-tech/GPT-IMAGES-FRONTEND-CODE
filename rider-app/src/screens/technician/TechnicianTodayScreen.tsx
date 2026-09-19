@@ -226,12 +226,14 @@ function StepScreen({
   template: (typeof SOP_TEMPLATE)[number]
   accuracy: number
   pendingAppeal: boolean
-  onCapture: (i: number, file: File) => void
+  onCapture: (i: number, file: File) => Promise<void>
   onSubmit: () => void
   onRetake: () => void
   onAppeal: () => void
 }) {
   const allCaptured = step.photos.every((p) => p !== null)
+  const [capturingIndex, setCapturingIndex] = useState<number | null>(null)
+  const [captureError, setCaptureError] = useState<string | null>(null)
 
   if (step.status === 'frozen') {
     return (
@@ -302,6 +304,11 @@ function StepScreen({
             <div key={i} className="rounded-xl overflow-hidden bg-surface-2 relative" style={{ aspectRatio: '4/3' }}>
               {step.photos[i] ? (
                 <img src={step.photos[i]!} alt="" className="w-full h-full object-cover" />
+              ) : capturingIndex === i ? (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-1">
+                  <span className="text-2xl animate-pulse">📷</span>
+                  <span className="text-[11px] text-ink-2 text-center px-1">अपलोड होत आहे…</span>
+                </div>
               ) : (
                 <label className="w-full h-full flex flex-col items-center justify-center gap-1 cursor-pointer">
                   <input
@@ -309,9 +316,19 @@ function StepScreen({
                     accept="image/*"
                     capture="environment"
                     className="hidden"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const f = e.target.files?.[0]
-                      if (f) onCapture(i, f)
+                      if (!f) return
+                      setCaptureError(null)
+                      setCapturingIndex(i)
+                      try {
+                        await onCapture(i, f)
+                      } catch {
+                        setCaptureError('फोटो प्रोसेस करता आले नाही — पुन्हा प्रयत्न करा.')
+                      } finally {
+                        setCapturingIndex(null)
+                        e.target.value = ''
+                      }
                     }}
                   />
                   <span className="text-2xl">📷</span>
@@ -321,6 +338,7 @@ function StepScreen({
             </div>
           ))}
         </div>
+        {captureError && <p className="text-caption font-semibold text-bad mt-2">{captureError}</p>}
 
         <div className="mt-4">
           <BindingChips gps live inApp unique />

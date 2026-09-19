@@ -8,8 +8,8 @@ import { ROLES } from '../lib/roles'
  * with no loading state visible to the room. */
 export function RoleSwitcherScreen() {
   return (
-    <div className="min-h-dvh bg-surface-2 flex justify-center">
-      <div className="w-full max-w-md bg-surface min-h-dvh relative shadow-sm">
+    <div className="min-h-screen bg-surface-2 flex justify-center">
+      <div className="w-full max-w-md bg-surface min-h-screen relative shadow-sm">
         <DemoRibbon />
         <div className="px-4 pt-5 pb-8">
           <h1 className="text-title-l font-extrabold">AIEC डेमो</h1>

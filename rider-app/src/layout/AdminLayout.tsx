@@ -7,8 +7,8 @@ import { ConversionBar } from '../components/ConversionBar'
  * (UX doc §0.4). */
 export function AdminLayout() {
   return (
-    <div data-theme="admin" className="min-h-dvh bg-surface-2 text-ink flex justify-center">
-      <div className="w-full max-w-md bg-surface min-h-dvh relative shadow-sm">
+    <div data-theme="admin" className="min-h-screen bg-surface-2 text-ink flex justify-center">
+      <div className="w-full max-w-md bg-surface min-h-screen relative shadow-sm">
         <DemoRibbon />
         <CoinFeedback />
         <div className="pb-14">
