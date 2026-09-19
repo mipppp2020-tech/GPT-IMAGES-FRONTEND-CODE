@@ -178,6 +178,27 @@
   --text-caption--line-height: 1.125rem;
 }
 
+/* ---------------------------------------------------------------------
+ * App-wide dark mode — one switch, orthogonal to the role theme above.
+ * Overrides only the four surface/ink tokens every shared component
+ * already reads through; each role's own --color-accent (and the
+ * lifecycle ramp) is left alone, since that's what actually carries role
+ * identity, not the light/dark polarity of its background.
+ * The plain selector covers screens with no [data-theme] override
+ * (Rider, Candidate — Sunlight's :root defaults); the descendant
+ * selector re-declares on the themed element itself, since a role block
+ * above already sets these tokens locally there and a locally-declared
+ * custom property always wins over one merely inherited from <html>.
+ * ------------------------------------------------------------------- */
+.aiec-dark,
+.aiec-dark [data-theme] {
+  --color-surface: #14181c;
+  --color-surface-2: #0c1013;
+  --color-surface-3: #1c2226;
+  --color-ink: #eef2f4;
+  --color-ink-2: #98a4ac;
+}
+
 html {
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
