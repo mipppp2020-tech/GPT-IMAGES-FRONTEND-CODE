@@ -3,6 +3,7 @@ import { RoleTopBar } from '../../components/RoleTopBar'
 import { useAiecStore } from '../../lib/store'
 import { useGeolocation } from '../../lib/useGeolocation'
 import { fileToCompressedDataUrl } from '../../lib/image'
+import { formatINR } from '../../lib/selectors'
 import type { QcVerdict, QcInspectionType } from '../../lib/types'
 
 const VERDICT_META: Record<QcVerdict, { label: string; glyph: string }> = {
@@ -16,6 +17,7 @@ export function QcChecklistScreen() {
   const navigate = useNavigate()
   const leads = useAiecStore((s) => s.leads)
   const inspections = useAiecStore((s) => s.inspections)
+  const qcWallet = useAiecStore((s) => s.qcWallet)
   const checkInInspection = useAiecStore((s) => s.checkInInspection)
   const setQcVerdict = useAiecStore((s) => s.setQcVerdict)
   const setQcNote = useAiecStore((s) => s.setQcNote)
@@ -67,6 +69,7 @@ export function QcChecklistScreen() {
 
   if (inspection.stage === 'signed') {
     const cleared = inspection.result === 'cleared'
+    const myFee = [...qcWallet].filter((w) => w.leadId === leadId).sort((a, b) => b.createdAt - a.createdAt)[0]?.amount ?? 0
     return (
       <div>
         <RoleTopBar title="अहवाल सबमिट झाला" back backTo="/qc" />
@@ -80,6 +83,15 @@ export function QcChecklistScreen() {
                 : 'हँडओव्हरसाठी पात्र — NOC आता ग्राहकाच्या स्क्रीनवर उपलब्ध होईल.'
               : 'अ‍ॅनोटेटेड रिवर्क यादी संबंधित टीमला पाठवली गेली आहे.'}
           </p>
+
+          <div className="mt-4 w-full rounded-2xl bg-surface-2 px-4 py-3.5">
+            <p className="text-caption text-ink-2">तुमची तपासणी फी</p>
+            <p className="text-title-l font-extrabold tnum mt-0.5" style={{ color: 'var(--color-accent)' }}>
+              +₹{formatINR(myFee)}
+            </p>
+            <p className="text-[11px] text-ink-2 mt-0.5">निकाल काहीही असो — तुम्ही तपासले, तुम्हाला त्याची फी मिळते.</p>
+          </div>
+
           <button
             onClick={() => navigate('/qc')}
             className="mt-8 tap-target w-full rounded-2xl bg-accent text-accent-ink font-extrabold text-body-l"

@@ -13,13 +13,24 @@ export function QcQueueScreen() {
   const leads = useAiecStore((s) => s.leads)
   const techJobs = useAiecStore((s) => s.techJobs)
   const inspections = useAiecStore((s) => s.inspections)
+  const qcWallet = useAiecStore((s) => s.qcWallet)
   const startInspection = useAiecStore((s) => s.startInspection)
 
   const queue = selectQcQueue(leads, techJobs)
+  const myEarnings = qcWallet.reduce((sum, w) => sum + w.amount, 0)
 
   return (
     <div>
       <RoleTopBar title="तपासणी रांग" />
+
+      <div className="mx-4 mt-3 rounded-2xl bg-surface-2 px-4 py-3.5">
+        <p className="text-caption text-ink-2">माझी एकूण कमाई — तपासणी फी</p>
+        <p className="text-title-l font-extrabold tnum mt-0.5" style={{ color: 'var(--color-accent)' }}>
+          ₹{formatINR(myEarnings)}
+        </p>
+        <p className="text-[11px] text-ink-2 mt-0.5">{qcWallet.length} तपासण्या पूर्ण</p>
+      </div>
+
       <div className="px-4 pt-3">
         <p className="text-caption text-ink-2">
           शाफ्ट QC — ग्राहकाने शाफ्ट तयार असल्याचे सांगितले आहे. अंतिम QC — तंत्रज्ञाने सर्व टप्पे पूर्ण केले आहेत, हे अनपेक्षित ऑडिट आहे.
