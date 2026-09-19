@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { RoleTopBar } from '../../components/RoleTopBar'
 import { useAiecStore } from '../../lib/store'
 import { KIT_TEMPLATE } from '../../lib/kits'
+import { formatINR } from '../../lib/selectors'
 
 /** P2 Kit Packing. UX doc §2.5: "Barcode-first. The scan target is the
  * largest interactive element on the packing screen... a packing screen
@@ -13,6 +14,7 @@ export function KitPackingScreen() {
   const navigate = useNavigate()
   const leads = useAiecStore((s) => s.leads)
   const supplyOrders = useAiecStore((s) => s.supplyOrders)
+  const supplierWallet = useAiecStore((s) => s.supplierWallet)
   const packKit = useAiecStore((s) => s.packKit)
   const sealAndDispatch = useAiecStore((s) => s.sealAndDispatch)
 
@@ -29,6 +31,7 @@ export function KitPackingScreen() {
   }
 
   if (order.stage === 'dispatched') {
+    const settled = [...supplierWallet].filter((w) => w.leadId === leadId).sort((a, b) => b.createdAt - a.createdAt)[0]?.amount ?? 0
     return (
       <div>
         <RoleTopBar title="पाठवले गेले" back backTo="/supplier" />
@@ -36,7 +39,13 @@ export function KitPackingScreen() {
           <span className="text-5xl mb-4">🔒</span>
           <p className="text-title-l font-extrabold">कंटेनर सील झाला</p>
           <p className="text-body text-ink-2 mt-2">{lead.buildingName} — सर्व 8 किट्स लोड, सील व पाठवले गेले.</p>
-          <p className="text-caption text-ink-2 mt-3">पेमेंट त्याच दिवशी सेटल झाले.</p>
+
+          <div className="mt-4 w-full rounded-2xl bg-good-surface border border-good/30 px-4 py-3.5">
+            <p className="text-caption text-good font-bold">पेमेंट सेटल झाले</p>
+            <p className="text-title-l font-extrabold tnum mt-0.5 text-good">₹{formatINR(settled)}</p>
+            <p className="text-[11px] text-ink-2 mt-0.5">त्याच दिवशी — 60/90 दिवसांच्या क्रेडिटची वाट नाही.</p>
+          </div>
+
           <button
             onClick={() => navigate('/supplier')}
             className="mt-8 tap-target w-full rounded-2xl bg-accent text-accent-ink font-extrabold text-body-l"

@@ -11,13 +11,22 @@ export function SupplierOrderBoardScreen() {
   const navigate = useNavigate()
   const leads = useAiecStore((s) => s.leads)
   const supplyOrders = useAiecStore((s) => s.supplyOrders)
+  const supplierWallet = useAiecStore((s) => s.supplierWallet)
   const acceptOrder = useAiecStore((s) => s.acceptOrder)
 
   const queue = selectSupplyQueue(leads)
+  const totalReceived = supplierWallet.reduce((sum, w) => sum + w.amount, 0)
 
   return (
     <div>
       <RoleTopBar title="ऑर्डर बोर्ड" />
+
+      <div className="mx-4 mt-3 rounded-2xl bg-good-surface border border-good/30 px-4 py-3.5">
+        <p className="text-caption text-good font-bold">एकूण मिळालेले पेमेंट — त्याच दिवशी, नेहमी</p>
+        <p className="text-title-l font-extrabold tnum mt-0.5 text-good">₹{formatINR(totalReceived)}</p>
+        <p className="text-[11px] text-ink-2 mt-0.5">{supplierWallet.length} डिलिव्हरी सेटल झाल्या — 60/90 दिवस क्रेडिट नाही.</p>
+      </div>
+
       <div className="px-4 pt-3">
         <p className="text-caption text-ink-2">QC क्लिअरन्स झाल्यावर ऑर्डर आपोआप वाटप होते — किंमत, वेळ, रेटिंग, अंतर, क्षमतेनुसार.</p>
       </div>
