@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Screen, Stack } from '@/app/Screen';
 import { AppBar } from '@/components/Chrome';
@@ -5,7 +6,8 @@ import { Icon } from '@/components/Icon';
 import { EntityCard, AlertCard } from '@/components/EntityCard';
 import { GlobalSearch } from '@/components/Operational';
 import { useI18n } from '@/i18n';
-import { LEAD_STATS, RIDER_LEADS } from '@/data/fixtures';
+import { LEAD_STATS } from '@/data/fixtures';
+import { useRider } from '@/app/RiderContext';
 import type { RiderLead } from '@/domain/types';
 
 /**
@@ -45,9 +47,40 @@ function actionFor(lead: RiderLead, t: (k: never) => string) {
   }
 }
 
+type SortKey = 'newest' | 'nearest' | 'earning';
+type FilterKey = 'all' | 'new' | 'followUp' | 'won';
+
 export function RiderLeads() {
   const { t } = useI18n();
   const nav = useNavigate();
+  const { leads } = useRider();
+  const [filter, setFilter] = useState<FilterKey>('all');
+  const [sort, setSort] = useState<SortKey>('newest');
+
+  /**
+   * The count tiles are the filter. Tapping one narrows the list rather than
+   * decorating it — a number you cannot act on is a number worth removing.
+   */
+  const rows = useMemo(() => {
+    const byFilter = leads.filter((l) => {
+      if (filter === 'all') return true;
+      if (filter === 'new') return l.status.state === 'new';
+      if (filter === 'followUp') return l.status.state === 'selling';
+      return ['won', 'installing', 'material', 'done'].includes(l.status.state);
+    });
+    const sorted = [...byFilter];
+    if (sort === 'nearest') sorted.sort((a, b) => a.distanceM - b.distanceM);
+    if (sort === 'earning') sorted.sort((a, b) => b.riderEarningPaise - a.riderEarningPaise);
+    return sorted;
+  }, [leads, filter, sort]);
+
+  const SORT_LABEL: Record<SortKey, string> = {
+    newest: t('leads.sortNewest'),
+    nearest: t('leads.sortNearest'),
+    earning: t('leads.sortEarning'),
+  };
+  const cycleSort = () =>
+    setSort((s) => (s === 'newest' ? 'nearest' : s === 'nearest' ? 'earning' : 'newest'));
 
   return (
     <Screen header={<AppBar notificationCount={3} />}>
@@ -77,10 +110,14 @@ export function RiderLeads() {
 
         {/* Counts. Four equal columns, each a filter entry point. */}
         <div className="aiec-stats">
-          <CountTile value={LEAD_STATS.total} label={t('leads.statTotal')} icon="list" tone="new" />
-          <CountTile value={LEAD_STATS.fresh} label={t('leads.statNew')} icon="sparkle" tone="closed" />
-          <CountTile value={LEAD_STATS.followUp} label={t('leads.statFollowUp')} icon="switch-camera" tone="selling" />
-          <CountTile value={LEAD_STATS.won} label={t('leads.statWon')} icon="check-circle" tone="done" />
+          <CountTile value={leads.length} label={t('leads.statTotal')} icon="list" tone="new"
+            on={filter === 'all'} onPress={() => setFilter('all')} />
+          <CountTile value={leads.filter((l) => l.status.state === 'new').length} label={t('leads.statNew')} icon="sparkle" tone="closed"
+            on={filter === 'new'} onPress={() => setFilter('new')} />
+          <CountTile value={leads.filter((l) => l.status.state === 'selling').length} label={t('leads.statFollowUp')} icon="switch-camera" tone="selling"
+            on={filter === 'followUp'} onPress={() => setFilter('followUp')} />
+          <CountTile value={LEAD_STATS.won} label={t('leads.statWon')} icon="check-circle" tone="done"
+            on={filter === 'won'} onPress={() => setFilter('won')} />
         </div>
 
         <GlobalSearch
@@ -88,13 +125,17 @@ export function RiderLeads() {
           filterLabel={t('home.filter')}
           trailing={
             <>
-              <button type="button" className="aiec-filterbtn">
+              <button
+                type="button"
+                className="aiec-filterbtn"
+                onClick={() => setFilter((f) => (f === 'all' ? 'new' : 'all'))}
+              >
                 <Icon name="filter" size={16} />
-                {t('home.filter')}
+                {filter === 'all' ? t('home.filter') : t('leads.filterOn')}
               </button>
-              <button type="button" className="aiec-filterbtn">
+              <button type="button" className="aiec-filterbtn" onClick={cycleSort}>
                 <Icon name="sort" size={16} />
-                {t('leads.sortNewest')}
+                {SORT_LABEL[sort]}
               </button>
             </>
           }
@@ -103,7 +144,7 @@ export function RiderLeads() {
         {/* Card list keeps its own rhythm: the reference runs a 9.5px gutter
             between cards, tighter than the section stack. */}
         <div style={{ display: 'grid', gap: 10 }}>
-          {RIDER_LEADS.map((lead) => (
+          {rows.map((lead) => (
             <EntityCard
               key={lead.id}
               lead={lead}
@@ -115,7 +156,11 @@ export function RiderLeads() {
           ))}
         </div>
 
-        <AlertCard title={t('leads.tip')} text={t('leads.tipBody')} icon="sparkle" tone="material" />
+        {rows.length === 0 ? (
+          <AlertCard title={t('leads.empty')} text={t('leads.emptyBody')} icon="sparkle" tone="new" />
+        ) : (
+          <AlertCard title={t('leads.tip')} text={t('leads.tipBody')} icon="sparkle" tone="material" />
+        )}
       </Stack>
     </Screen>
   );
@@ -126,14 +171,30 @@ function CountTile({
   label,
   icon,
   tone,
+  on = false,
+  onPress,
 }: {
   value: number;
   label: string;
   icon: 'list' | 'sparkle' | 'switch-camera' | 'check-circle';
   tone: 'new' | 'closed' | 'selling' | 'done';
+  on?: boolean;
+  onPress?: () => void;
 }) {
   return (
-    <div className="aiec-stat" style={{ gap: 'var(--aiec-space-4)', padding: 'var(--aiec-space-4) var(--aiec-space-5)' }}>
+    <button
+      type="button"
+      onClick={onPress}
+      aria-pressed={on}
+      className="aiec-stat"
+      style={{
+        gap: 'var(--aiec-space-4)',
+        padding: 'var(--aiec-space-4) var(--aiec-space-5)',
+        borderColor: on ? 'var(--border-primary)' : undefined,
+        borderWidth: on ? 'var(--aiec-border-emphasis)' : undefined,
+        background: on ? 'var(--surface-primary-weak)' : undefined,
+      }}
+    >
       <span
         className="aiec-stat__icon"
         style={{
@@ -153,6 +214,6 @@ function CountTile({
           {label}
         </span>
       </span>
-    </div>
+    </button>
   );
 }

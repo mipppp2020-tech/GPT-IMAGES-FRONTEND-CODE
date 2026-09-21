@@ -5,6 +5,7 @@ import { Icon } from '@/components/Icon';
 import { AlertCard } from '@/components/EntityCard';
 import { MoneyMeter } from '@/components/Money';
 import { usePipeline } from '@/app/PipelineContext';
+import { useRider } from '@/app/RiderContext';
 import { useI18n } from '@/i18n';
 import { rupees, formatINR } from '@/policy/money';
 import { nextPayoutAt, capForJob } from '@/policy/wallet';
@@ -27,8 +28,11 @@ export function RiderEarnings() {
   const nav = useNavigate();
   const { state } = usePipeline();
 
-  const pending = rupees(2800);
-  const cleared = rupees(4320);
+  // The live wallet. Every capture credits it through the policy rules, so
+  // this number and My Leads can never disagree.
+  const { wallet, capturedToday, queuedCount, online } = useRider();
+  const pending = wallet.pending;
+  const cleared = wallet.cleared;
   const payout = nextPayoutAt(new Date());
   const { ceiling } = capForJob(rupees(115000));
   const shutGates = Object.values(state.gates).filter((g) => !g.open).length;
@@ -43,9 +47,22 @@ export function RiderEarnings() {
         <MoneyMeter
           pending={pending}
           cleared={cleared}
-          cause={t('money.walletCause')}
+          cause={
+            capturedToday > 0
+              ? t('ride.todayCaptured') + ': ' + capturedToday
+              : t('money.walletCause')
+          }
           consequence={t('money.walletConsequence')}
         />
+
+        {!online && queuedCount > 0 ? (
+          <AlertCard
+            title={t('wallet.queued', { n: queuedCount })}
+            text={t('offline.body')}
+            icon="cloud-off"
+            tone="new"
+          />
+        ) : null}
 
         <AlertCard
           title={

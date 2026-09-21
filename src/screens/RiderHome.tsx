@@ -8,7 +8,8 @@ import { MapView } from '@/components/MapView';
 import { GlobalSearch, SafetyOverride, OfflineQueue } from '@/components/Operational';
 import { useI18n, formatRupees } from '@/i18n';
 import { useApp } from '@/app/AppContext';
-import { EARNINGS, MAP_POINTS, NEARBY_LEADS, OFFLINE_ITEMS, SELF_POSITION } from '@/data/fixtures';
+import { EARNINGS, MAP_POINTS, OFFLINE_ITEMS, SELF_POSITION } from '@/data/fixtures';
+import { useRider, DAILY_TARGET_LEADS } from '@/app/RiderContext';
 import { LIFECYCLE_STATES, type LifecycleState } from '@/domain/lifecycle';
 
 /**
@@ -38,6 +39,10 @@ export function RiderHome() {
   const { t, lang } = useI18n();
   const { online } = useApp();
   const nav = useNavigate();
+  const { rideStarted, startRide, endRide, capturedToday, wallet, leads, logBreak } = useRider();
+  // The three nearest leads are the day's opportunities, taken from live
+  // state so a capture changes the home screen too.
+  const nearby = [...leads].sort((a, b) => a.distanceM - b.distanceM).slice(0, 3);
   const [active, setActive] = useState<Set<LifecycleState>>(new Set(LIFECYCLE_STATES));
 
   const toggle = (s: LifecycleState) => {
@@ -104,7 +109,7 @@ export function RiderHome() {
                   color: 'var(--text-primary)',
                 }}
               >
-                {t('common.rupee')} {formatRupees(EARNINGS.todayPaise, lang)}
+                {t('common.rupee')} {formatRupees(wallet.pending, lang)}
               </span>
             </span>
             <Icon name="chevron-right" size={16} style={{ color: 'var(--icon-secondary)', flex: 'none' }} />
@@ -112,19 +117,47 @@ export function RiderHome() {
         </div>
 
         {/* Three KPIs. Rider-scoped only: no owner cash position appears here. */}
+        {/* R1's primary control: the ride has to be on before capture pays. */}
+        <button
+          type="button"
+          className={`aiec-btn ${rideStarted ? 'aiec-btn--secondary' : 'aiec-btn--primary'} aiec-btn--block`}
+          onClick={rideStarted ? endRide : startRide}
+          style={{ minHeight: 'var(--aiec-touch-sunlight-primary)' }}
+        >
+          <Icon name={rideStarted ? 'check-circle' : 'navigation'} size={20} />
+          {rideStarted
+            ? `${t('ride.started')} · ${t('ride.target', { n: capturedToday, total: DAILY_TARGET_LEADS })}`
+            : t('ride.start')}
+        </button>
+
+        {rideStarted ? (
+          <div className="aiec-nextaction__row">
+            <button type="button" className="aiec-btn aiec-btn--secondary aiec-btn--compact" onClick={logBreak}>
+              <Icon name="clock" size={17} />
+              {t('ride.logBreak')}
+            </button>
+            <button type="button" className="aiec-btn aiec-btn--primary aiec-btn--compact" onClick={() => nav('/capture')}>
+              <Icon name="camera" size={17} />
+              {t('home.captureLead')}
+            </button>
+          </div>
+        ) : null}
+
         <div className="aiec-stats">
           <StatTile
-            value={String(EARNINGS.appointmentsToday)}
-            label={t('home.statAppointments')}
+            value={String(capturedToday)}
+            label={t('ride.todayCaptured')}
             icon="target"
             tone="neutral"
+            onPress={() => nav('/leads')}
           />
-          <StatTile value={String(EARNINGS.nearbyLeads)} label={t('home.statNearby')} icon="pin-filled" tone="success" />
+          <StatTile value={String(leads.length)} label={t('home.statNearby')} icon="pin-filled" tone="success" onPress={() => nav('/leads')} />
           <StatTile
             value={`${t('common.rupee')}${formatRupees(EARNINGS.weekPaise, lang)}`}
             label={t('home.statWeek')}
             icon="bars"
             tone="info"
+            onPress={() => nav('/earnings')}
           />
         </div>
 
@@ -155,27 +188,20 @@ export function RiderHome() {
           }
         />
 
-        <EntityCard
-          lead={NEARBY_LEADS[0]}
-          variant="nearby"
-          action={{ label: t('home.captureLead'), icon: 'arrow-right' }}
-          onAction={() => nav('/capture')}
-          onOpen={() => nav('/leads/l1')}
-        />
-        <EntityCard
-          lead={NEARBY_LEADS[1]}
-          variant="nearby"
-          action={{ label: t('home.viewDetails'), icon: 'arrow-right' }}
-          onAction={() => nav('/leads/l2')}
-          onOpen={() => nav('/leads/l2')}
-        />
-        <EntityCard
-          lead={NEARBY_LEADS[2]}
-          variant="nearby"
-          action={{ label: t('home.showRoute'), icon: 'navigation' }}
-          onAction={() => nav('/leads/l3')}
-          onOpen={() => nav('/leads/l3')}
-        />
+        {nearby.map((lead, i) => (
+          <EntityCard
+            key={lead.id}
+            lead={lead}
+            variant="nearby"
+            action={
+              i === 0
+                ? { label: t('home.captureLead'), icon: 'camera' }
+                : { label: t('home.viewDetails'), icon: 'arrow-right' }
+            }
+            onAction={() => nav(i === 0 ? '/capture' : `/leads/${lead.id}`)}
+            onOpen={() => nav(`/leads/${lead.id}`)}
+          />
+        ))}
 
         <SafetyOverride />
       </Stack>

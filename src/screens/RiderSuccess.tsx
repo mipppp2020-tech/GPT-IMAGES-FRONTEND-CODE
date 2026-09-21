@@ -5,6 +5,7 @@ import { Icon } from '@/components/Icon';
 import { AlertCard, THUMBS } from '@/components/EntityCard';
 import { useI18n, formatRupees } from '@/i18n';
 import { RIDER_LEADS } from '@/data/fixtures';
+import { useRider } from '@/app/RiderContext';
 
 /**
  * SCREEN CONTRACT — S-R-06 Submission confirmation
@@ -31,7 +32,12 @@ import { RIDER_LEADS } from '@/data/fixtures';
 export function RiderSuccess() {
   const { t, lang } = useI18n();
   const nav = useNavigate();
-  const lead = RIDER_LEADS[0];
+  // The lead this screen confirms is the one the capture just minted, not a
+  // fixture. If a rider lands here without capturing, fall back to the most
+  // recent lead so the screen is never empty.
+  const { lastOutcome, leads } = useRider();
+  const lead = lastOutcome?.kind === 'captured' ? lastOutcome.lead : (leads[0] ?? RIDER_LEADS[0]);
+  const credited = lastOutcome?.kind === 'captured' ? lastOutcome.credited : lead.riderEarningPaise;
 
   return (
     <Screen header={<AppBar notificationCount={3} />} statusBarTime="9:20">
@@ -78,8 +84,8 @@ export function RiderSuccess() {
           </div>
 
           <div className="aiec-rows">
-            <Row icon="calendar" k={t('success.submittedAt')} v="16 ऑग, 2025, 10:24 AM" />
-            <Row icon="rupee" k={t('success.amount')} v={`${t('common.rupee')} ${formatRupees(3800, lang)}`} />
+            <Row icon="calendar" k={t('success.submittedAt')} v={lead.capturedAt.replace(/^कॅप्चर: /, '')} />
+            <Row icon="rupee" k={t('success.amount')} v={`${t('common.rupee')} ${formatRupees(credited, lang)}`} />
             <Row icon="wallet-card" k={t('success.method')} v="UPI (sandeep.patil@okaxis)" />
             {/* The submission outcome, not the lead's lifecycle state: the
                 lead is recorded; its journey has not started yet. */}

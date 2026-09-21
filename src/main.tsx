@@ -8,13 +8,16 @@ import { router } from './app/routes';
 import { I18nProvider } from './i18n';
 import { AppProvider } from './app/AppContext';
 import { PipelineProvider } from './app/PipelineContext';
+import { RiderProvider } from './app/RiderContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <I18nProvider initial="mr">
       <AppProvider role="rider" demo={new URLSearchParams(location.search).has('demo')}>
         <PipelineProvider>
-          <RouterProvider router={router} />
+          <RiderProvider>
+            <RouterProvider router={router} />
+          </RiderProvider>
         </PipelineProvider>
       </AppProvider>
     </I18nProvider>

@@ -42,6 +42,10 @@ export const mrRider = {
   'cap.simOffline': 'ऑफलाइन करा',
   'cap.simOnline': 'ऑनलाइन करा',
 
+  'leads.sortNearest': 'जवळचे प्रथम',
+  'leads.sortEarning': 'जास्त कमाई प्रथम',
+  'leads.filterOn': 'फ़िल्टर चालू',
+
   'wallet.queued': '{n} लीड फोनमध्ये थांबले आहेत',
   'wallet.syncing': '₹ {amount} (पाठवत आहे)',
 } as const;
@@ -90,6 +94,10 @@ export const enRider: Record<RiderStringKey, string> = {
   'cap.simGpsOn': 'Turn GPS on',
   'cap.simOffline': 'Go offline',
   'cap.simOnline': 'Go online',
+
+  'leads.sortNearest': 'Nearest first',
+  'leads.sortEarning': 'Highest earning first',
+  'leads.filterOn': 'Filter on',
 
   'wallet.queued': '{n} leads waiting on this phone',
   'wallet.syncing': '₹ {amount} (sending)',

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { paise, rupees, type Paise } from '@/policy/money';
 import { issueId } from '@/policy/ids';
 import { requestCredit, applyPenalty, clearCredit, type WalletBalance } from '@/policy/wallet';
@@ -87,16 +87,60 @@ const LOCALITIES = [
   { locality: 'औंध, पुणे', pincode: '411007', zone: 'Z2' },
 ];
 
+/**
+ * The rider's day survives a reload.
+ *
+ * Non-negotiable #5: "Offline must work — concrete shafts have no signal",
+ * and §8.3 requires captures to be "queued locally, synced on reconnect".
+ * In-memory state would lose a morning's leads to a dropped tab, so the
+ * session is persisted. Reads are defensive: a corrupt or absent payload
+ * starts a clean day rather than crashing the app on launch.
+ */
+const STORE_KEY = 'aiec.rider.session.v1';
+
+interface Persisted {
+  rideStarted: boolean;
+  wallet: WalletBalance;
+  leads: RiderLead[];
+  capturedToday: number;
+  queuedCount: number;
+  serial: number;
+}
+
+function loadSession(): Partial<Persisted> {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Partial<Persisted>;
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveSession(p: Persisted) {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(p));
+  } catch {
+    // A full or blocked store must never break a capture in progress.
+  }
+}
+
 export function RiderProvider({ children }: { children: ReactNode }) {
-  const [rideStarted, setRideStarted] = useState(false);
+  const restored = loadSession();
+  const [rideStarted, setRideStarted] = useState(restored.rideStarted ?? false);
   const [gpsAvailable, setGps] = useState(true);
   const [online, setOnline] = useState(true);
-  const [wallet, setWallet] = useState<WalletBalance>({ pending: rupees(0), cleared: rupees(4320) });
-  const [leads, setLeads] = useState<RiderLead[]>(RIDER_LEADS);
-  const [capturedToday, setCapturedToday] = useState(0);
-  const [queuedCount, setQueuedCount] = useState(0);
+  const [wallet, setWallet] = useState<WalletBalance>(
+    restored.wallet ?? { pending: rupees(0), cleared: rupees(4320) },
+  );
+  const [leads, setLeads] = useState<RiderLead[]>(restored.leads ?? RIDER_LEADS);
+  const [capturedToday, setCapturedToday] = useState(restored.capturedToday ?? 0);
+  const [queuedCount, setQueuedCount] = useState(restored.queuedCount ?? 0);
+  // The draft is deliberately NOT persisted: a half-taken photo set belongs to
+  // the moment the rider was standing at the shaft, not to the next session.
   const [draft, setDraft] = useState<CapturedPhoto[]>([]);
-  const [serial, setSerial] = useState(448);
+  const [serial, setSerial] = useState(restored.serial ?? 448);
   const [lastOutcome, setLastOutcome] = useState<CaptureOutcome | null>(null);
 
   const startRide = useCallback(() => setRideStarted(true), []);
@@ -179,6 +223,10 @@ export function RiderProvider({ children }: { children: ReactNode }) {
   const logBreak = useCallback(() => {
     setWallet((w) => ({ ...w, pending: paise(w.pending + RIDER_RATES.breakLogged) }));
   }, []);
+
+  useEffect(() => {
+    saveSession({ rideStarted, wallet, leads, capturedToday, queuedCount, serial });
+  }, [rideStarted, wallet, leads, capturedToday, queuedCount, serial]);
 
   const value = useMemo<RiderValue>(
     () => ({

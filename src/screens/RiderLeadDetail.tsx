@@ -10,6 +10,7 @@ import { SLAIndicator } from '@/components/Operational';
 import { MapView } from '@/components/MapView';
 import { useI18n, formatRupees, formatDistance } from '@/i18n';
 import { RIDER_LEADS } from '@/data/fixtures';
+import { useRider } from '@/app/RiderContext';
 import hero from '@/assets/hero-site.jpg';
 
 /**
@@ -39,7 +40,11 @@ export function RiderLeadDetail() {
   const { t, lang } = useI18n();
   const nav = useNavigate();
   const { id } = useParams();
-  const lead = RIDER_LEADS.find((l) => l.id === id) ?? RIDER_LEADS[0];
+  // Look the lead up in live session state, not the fixture array — a lead
+  // captured five seconds ago exists only there, and opening it from My Leads
+  // would otherwise silently show a different site.
+  const { leads } = useRider();
+  const lead = leads.find((l) => l.id === id) ?? RIDER_LEADS[0];
   const dist = formatDistance(lead.distanceM, lang);
 
   return (
