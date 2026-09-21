@@ -17,6 +17,7 @@ import { RiderProfile } from '@/screens/RiderProfile';
 import { RiderFeedback } from '@/screens/RiderFeedback';
 import { MoneyPipeline } from '@/screens/MoneyPipeline';
 import { RiderEarnings } from '@/screens/RiderEarnings';
+import { NotFound } from '@/screens/NotFound';
 
 /**
  * Hash routing, deliberately.
@@ -29,7 +30,7 @@ import { RiderEarnings } from '@/screens/RiderEarnings';
  */
 export const router = createHashRouter([
   /* Lead flow */
-  { path: '/', element: <RiderHome /> },
+  { path: '/', element: <RiderHome />, errorElement: <NotFound /> },
   { path: '/leads', element: <RiderLeads /> },
   { path: '/leads/:id', element: <RiderLeadDetail /> },
   { path: '/capture', element: <RiderCapture /> },
@@ -53,4 +54,10 @@ export const router = createHashRouter([
   { path: '/profile', element: <RiderProfile /> },
   { path: '/feedback', element: <RiderFeedback /> },
   { path: '/earnings', element: <RiderEarnings /> },
+
+  /*
+   * Any other hash. A shared link that loses a character must not drop a
+   * rider onto the router's English stack trace.
+   */
+  { path: '*', element: <NotFound /> },
 ]);

@@ -229,6 +229,11 @@ const mrCore = {
   'offline.syncing': 'पाठवत आहे...',
   'offline.storedLocally': 'फोनमध्ये जतन केले',
 
+  /* ------------------------------------------------------------ not found */
+  'notfound.title': 'हा पत्ता ॲपमध्ये नाही',
+  'notfound.body': 'तुम्ही उघडलेली लिंक इथल्या कोणत्याही स्क्रीनकडे जात नाही. तुमची कामाची नोंद सुरक्षित आहे — होमवरून पुन्हा सुरू करा.',
+  'notfound.action': 'होमवर जा',
+
   /* ------------------------------------------------------------ common */
   'common.rupee': '₹',
   'common.metre': 'मीटर',
@@ -434,6 +439,9 @@ const enCore: Record<keyof typeof mrCore, string> = {
   'common.required': 'Required',
   'common.optional': 'Optional',
   'common.of': '/',
+  'notfound.title': 'This address is not in the app',
+  'notfound.body': 'The link you opened does not point to a screen here. Your saved work is safe — start again from home.',
+  'notfound.action': 'Go to home',
 };
 
 export const en: Record<StringKey, string> = { ...enCore, ...enRecords, ...enPipeline, ...enRider };
