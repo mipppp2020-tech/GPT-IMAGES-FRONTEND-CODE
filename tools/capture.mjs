@@ -26,7 +26,7 @@ const page = await browser.newPage({
 });
 
 for (const s of SCREENS) {
-  await page.goto(`${BASE}${s.path}`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/#${s.path}`, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(150);
 

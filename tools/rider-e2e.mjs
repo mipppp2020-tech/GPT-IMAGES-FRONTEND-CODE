@@ -31,7 +31,7 @@ const countLeads = async () => {
   return p.locator('.aiec-entity__title').count();
 };
 
-await p.goto(BASE + '/', { waitUntil: 'networkidle' });
+await p.goto(BASE + '/#/', { waitUntil: 'networkidle' });
 await p.evaluate(() => document.fonts.ready);
 await shot('home-before');
 
@@ -58,7 +58,7 @@ for (let i = 1; i <= 3; i++) {
 await p.getByRole('button', { name: /सबमिट करा/ }).click();
 await p.waitForTimeout(450);
 await shot('submitted');
-console.log(`after submit, url = ${p.url().replace(BASE, '')}`);
+console.log(`after submit, url = ${p.url().replace(BASE + '/#', '')}`);
 
 const walletAfter = await readWallet();
 await shot('earnings-after');

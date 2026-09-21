@@ -18,7 +18,7 @@ let fails = 0;
 for (const bp of BREAKPOINTS) {
   const page = await browser.newPage({ viewport: { width: bp, height: 932 } });
   for (const s of SCREENS) {
-    await page.goto(`${BASE}${s.path}`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/#${s.path}`, { waitUntil: 'networkidle' });
     const r = await page.evaluate(() => {
       const doc = document.documentElement;
       const overflow = doc.scrollWidth - doc.clientWidth;
@@ -44,7 +44,7 @@ for (const bp of BREAKPOINTS) {
 // 200% text scale on the densest screens.
 const page = await browser.newPage({ viewport: { width: 430, height: 932 } });
 for (const s of SCREENS) {
-  await page.goto(`${BASE}${s.path}`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/#${s.path}`, { waitUntil: 'networkidle' });
   await page.addStyleTag({ content: 'html{font-size:32px !important}' });
   await page.waitForTimeout(80);
   const r = await page.evaluate(() => {

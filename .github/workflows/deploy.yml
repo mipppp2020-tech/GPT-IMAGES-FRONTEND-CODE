@@ -1,0 +1,57 @@
+# Publishes the built app to GitHub Pages so it can be opened on a phone.
+#
+# The build is static and uses hash routing, so no rewrite rules are needed and
+# the same artifact works at a domain root or under /repo-name/.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, claude/rider-role-images-092o8r]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The policy engine guards money movement; a deploy that skipped it
+      # could ship a build where a payment gate no longer holds.
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

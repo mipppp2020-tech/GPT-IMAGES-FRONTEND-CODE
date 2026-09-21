@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createHashRouter } from 'react-router-dom';
 import { RiderHome } from '@/screens/RiderHome';
 import { RiderLeads } from '@/screens/RiderLeads';
 import { RiderCapture } from '@/screens/RiderCapture';
@@ -18,7 +18,16 @@ import { RiderFeedback } from '@/screens/RiderFeedback';
 import { MoneyPipeline } from '@/screens/MoneyPipeline';
 import { RiderEarnings } from '@/screens/RiderEarnings';
 
-export const router = createBrowserRouter([
+/**
+ * Hash routing, deliberately.
+ *
+ * This app is deployed as static files. With history routing a deep link like
+ * /leads asks the host for a file that does not exist, which 404s on GitHub
+ * Pages and most object stores unless you add rewrite rules per host. The
+ * hash never reaches the server, so the same build works everywhere and a
+ * link shared to a phone opens the screen it names.
+ */
+export const router = createHashRouter([
   /* Lead flow */
   { path: '/', element: <RiderHome /> },
   { path: '/leads', element: <RiderLeads /> },

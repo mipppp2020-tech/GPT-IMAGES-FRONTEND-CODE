@@ -18,7 +18,7 @@ let n = 0;
 async function shot(label) {
   n++;
   await p.screenshot({ path: `${OUT}/${String(n).padStart(2, '0')}-${label}.png` });
-  console.log(`${String(n).padStart(2, '0')}  ${label.padEnd(24)} ${p.url().replace(BASE, '') || '/'}`);
+  console.log(`${String(n).padStart(2, '0')}  ${label.padEnd(24)} ${p.url().replace(BASE + '/#', '') || '/'}`);
 }
 async function tap(name, label, role = 'button') {
   await p.getByRole(role, { name }).first().click({ timeout: 5000 });
@@ -26,7 +26,7 @@ async function tap(name, label, role = 'button') {
   await shot(label);
 }
 
-await p.goto(BASE + '/', { waitUntil: 'networkidle' });
+await p.goto(BASE + '/#/', { waitUntil: 'networkidle' });
 await p.evaluate(() => document.fonts.ready);
 await p.waitForTimeout(300);
 await shot('01-home-before-ride');
